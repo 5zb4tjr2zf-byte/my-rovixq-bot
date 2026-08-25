@@ -1,7 +1,7 @@
 import logging
 import os
 import requests
-from telegram import Update
+from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
@@ -17,40 +17,45 @@ logging.basicConfig(
 
 TOKEN = os.environ.get("BOT_TOKEN")
 
-# Відповідність команд і ID монет на CoinGecko
+# Відповідність кнопок і ID монет на CoinGecko
 COINS = {
-    "btc": {"id": "bitcoin", "name": "Bitcoin (BTC)", "emoji": "₿"},
-    "eth": {"id": "ethereum", "name": "Ethereum (ETH)", "emoji": "Ξ"},
-    "ton": {"id": "the-open-network", "name": "Toncoin (TON)", "emoji": "💎"},
-    "sol": {"id": "solana", "name": "Solana (SOL)", "emoji": "◎"},
+    "₿ Bitcoin": {"id": "bitcoin", "name": "Bitcoin (BTC)", "emoji": "₿"},
+    "Ξ Ethereum": {"id": "ethereum", "name": "Ethereum (ETH)", "emoji": "Ξ"},
+    "💎 Toncoin": {"id": "the-open-network", "name": "Toncoin (TON)", "emoji": "💎"},
+    "◎ Solana": {"id": "solana", "name": "Solana (SOL)", "emoji": "◎"},
 }
+
+ALL_BUTTON = "📊 Всі монети"
+
+# Клавіатура з кнопками (2 в ряд)
+keys = list(COINS.keys())
+KEYBOARD = ReplyKeyboardMarkup(
+    [
+        [keys[0], keys[1]],
+        [keys[2], keys[3]],
+        [ALL_BUTTON],
+    ],
+    resize_keyboard=True,
+)
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     await update.message.reply_text(
         f"Привіт, {user.first_name}! 👋\n"
-        "Я простий бот. Напиши мені щось, і я відповім тим самим повідомленням.\n\n"
-        "Команди:\n"
-        "/start — почати\n"
-        "/help — допомога\n"
-        "/btc — ціна Bitcoin\n"
-        "/eth — ціна Ethereum\n"
-        "/ton — ціна Toncoin\n"
-        "/sol — ціна Solana\n"
-        "/crypto — всі монети одразу"
+        "Обери монету кнопкою знизу, щоб дізнатись ціну 👇",
+        reply_markup=KEYBOARD,
     )
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "Напиши /btc, /eth, /ton або /sol, щоб дізнатись ціну конкретної монети.\n"
-        "Або /crypto, щоб побачити всі одразу.\n"
-        "Просто текст — я його повторю."
+        "Натисни кнопку внизу, щоб дізнатись ціну монети, або обери «Всі монети».",
+        reply_markup=KEYBOARD,
     )
 
 
-def format_coin(coin_id: str, name: str, emoji: str, data: dict) -> str:
+def format_coin(name: str, emoji: str, coin_id: str, data: dict) -> str:
     usd = data[coin_id]["usd"]
     uah = data[coin_id]["uah"]
     change = data[coin_id]["usd_24h_change"]
@@ -71,7 +76,7 @@ def format_coin(coin_id: str, name: str, emoji: str, data: dict) -> str:
     )
 
 
-async def get_prices(coin_ids: list) -> dict:
+def get_prices(coin_ids: list) -> dict:
     response = requests.get(
         "https://api.coingecko.com/api/v3/simple/price",
         params={
@@ -84,44 +89,45 @@ async def get_prices(coin_ids: list) -> dict:
     return response.json()
 
 
-async def coin_price(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    command = update.message.text.replace("/", "").split("@")[0].lower()
-    coin = COINS.get(command)
-    if not coin:
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    text = update.message.text
+
+    # Одна конкретна монета
+    if text in COINS:
+        coin = COINS[text]
+        try:
+            data = get_prices([coin["id"]])
+            reply = format_coin(coin["name"], coin["emoji"], coin["id"], data)
+            await update.message.reply_text(reply, parse_mode="Markdown", reply_markup=KEYBOARD)
+        except Exception as e:
+            logging.error(f"Помилка отримання ціни: {e}")
+            await update.message.reply_text(
+                "Не вдалось отримати ціну 😕 Спробуй ще раз трохи пізніше.",
+                reply_markup=KEYBOARD,
+            )
         return
 
-    try:
-        data = await get_prices([coin["id"]])
-        text = format_coin(coin["id"], coin["name"], coin["emoji"], data)
-        await update.message.reply_text(text, parse_mode="Markdown")
-    except Exception as e:
-        logging.error(f"Помилка отримання ціни {command}: {e}")
-        await update.message.reply_text(
-            "Не вдалось отримати ціну 😕 Спробуй ще раз трохи пізніше."
-        )
+    # Всі монети одразу
+    if text == ALL_BUTTON:
+        try:
+            coin_ids = [c["id"] for c in COINS.values()]
+            data = get_prices(coin_ids)
+            parts = [
+                format_coin(c["name"], c["emoji"], c["id"], data)
+                for c in COINS.values()
+            ]
+            reply = "\n\n".join(parts)
+            await update.message.reply_text(reply, parse_mode="Markdown", reply_markup=KEYBOARD)
+        except Exception as e:
+            logging.error(f"Помилка отримання цін: {e}")
+            await update.message.reply_text(
+                "Не вдалось отримати ціни 😕 Спробуй ще раз трохи пізніше.",
+                reply_markup=KEYBOARD,
+            )
+        return
 
-
-async def crypto_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
-        coin_ids = [c["id"] for c in COINS.values()]
-        data = await get_prices(coin_ids)
-
-        parts = []
-        for coin in COINS.values():
-            parts.append(format_coin(coin["id"], coin["name"], coin["emoji"], data))
-
-        text = "\n\n".join(parts)
-        await update.message.reply_text(text, parse_mode="Markdown")
-    except Exception as e:
-        logging.error(f"Помилка отримання цін: {e}")
-        await update.message.reply_text(
-            "Не вдалось отримати ціни 😕 Спробуй ще раз трохи пізніше."
-        )
-
-
-async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = update.message.text
-    await update.message.reply_text(f"Ти написав: {text}")
+    # Будь-який інший текст
+    await update.message.reply_text(f"Ти написав: {text}", reply_markup=KEYBOARD)
 
 
 def main():
@@ -134,12 +140,7 @@ def main():
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", help_command))
-    app.add_handler(CommandHandler("btc", coin_price))
-    app.add_handler(CommandHandler("eth", coin_price))
-    app.add_handler(CommandHandler("ton", coin_price))
-    app.add_handler(CommandHandler("sol", coin_price))
-    app.add_handler(CommandHandler("crypto", crypto_all))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     print("Бот запущено... Натисни Ctrl+C щоб зупинити.")
     app.run_polling()
