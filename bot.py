@@ -1,11 +1,12 @@
 import logging
 import os
 import requests
-from telegram import Update, ReplyKeyboardMarkup
+from telegram import Update, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
     MessageHandler,
+    CallbackQueryHandler,
     ContextTypes,
     filters,
 )
@@ -17,6 +18,10 @@ logging.basicConfig(
 
 TOKEN = os.environ.get("BOT_TOKEN")
 
+# Канал, підписку на який перевіряємо (без @ для API-виклику)
+CHANNEL_USERNAME = "rxchanel"
+CHANNEL_LINK = f"https://t.me/{CHANNEL_USERNAME}"
+
 # Відповідність кнопок і ID монет на CoinGecko
 COINS = {
     "₿ Bitcoin": {"id": "bitcoin", "name": "Bitcoin (BTC)", "emoji": "₿"},
@@ -27,7 +32,6 @@ COINS = {
 
 ALL_BUTTON = "📊 Всі монети"
 
-# Клавіатура з кнопками (2 в ряд)
 keys = list(COINS.keys())
 KEYBOARD = ReplyKeyboardMarkup(
     [
@@ -38,17 +42,65 @@ KEYBOARD = ReplyKeyboardMarkup(
     resize_keyboard=True,
 )
 
+SUBSCRIBE_KEYBOARD = InlineKeyboardMarkup(
+    [
+        [InlineKeyboardButton("📢 Підписатись на канал", url=CHANNEL_LINK)],
+        [InlineKeyboardButton("✅ Я підписався", callback_data="check_subscription")],
+    ]
+)
+
+
+async def is_subscribed(user_id: int, context: ContextTypes.DEFAULT_TYPE) -> bool:
+    try:
+        member = await context.bot.get_chat_member(
+            chat_id=f"@{CHANNEL_USERNAME}", user_id=user_id
+        )
+        return member.status in ("member", "administrator", "creator")
+    except Exception as e:
+        logging.error(f"Помилка перевірки підписки: {e}")
+        return False
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
-    await update.message.reply_text(
-        f"Привіт, {user.first_name}! 👋\n"
-        "Обери монету кнопкою знизу, щоб дізнатись ціну 👇",
-        reply_markup=KEYBOARD,
-    )
+    if await is_subscribed(user.id, context):
+        await update.message.reply_text(
+            f"Привіт, {user.first_name}! 👋\n"
+            "Обери монету кнопкою знизу, щоб дізнатись ціну 👇",
+            reply_markup=KEYBOARD,
+        )
+    else:
+        await update.message.reply_text(
+            f"Привіт, {user.first_name}! 👋\n\n"
+            f"Щоб користуватись ботом, спочатку підпишись на канал @{CHANNEL_USERNAME}.",
+            reply_markup=SUBSCRIBE_KEYBOARD,
+        )
+
+
+async def check_subscription_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    user = query.from_user
+    await query.answer()
+
+    if await is_subscribed(user.id, context):
+        await query.edit_message_text("✅ Дякую за підписку! Тепер бот доступний.")
+        await context.bot.send_message(
+            chat_id=user.id,
+            text="Обери монету кнопкою знизу, щоб дізнатись ціну 👇",
+            reply_markup=KEYBOARD,
+        )
+    else:
+        await query.answer("Ти ще не підписався на канал 🙁", show_alert=True)
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    if not await is_subscribed(user.id, context):
+        await update.message.reply_text(
+            f"Щоб користуватись ботом, підпишись на канал @{CHANNEL_USERNAME}.",
+            reply_markup=SUBSCRIBE_KEYBOARD,
+        )
+        return
     await update.message.reply_text(
         "Натисни кнопку внизу, щоб дізнатись ціну монети, або обери «Всі монети».",
         reply_markup=KEYBOARD,
@@ -90,7 +142,16 @@ def get_prices(coin_ids: list) -> dict:
 
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
     text = update.message.text
+
+    # Перевірка підписки перед будь-якою дією бота
+    if not await is_subscribed(user.id, context):
+        await update.message.reply_text(
+            f"Щоб користуватись ботом, підпишись на канал @{CHANNEL_USERNAME}.",
+            reply_markup=SUBSCRIBE_KEYBOARD,
+        )
+        return
 
     # Одна конкретна монета
     if text in COINS:
@@ -140,6 +201,7 @@ def main():
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", help_command))
+    app.add_handler(CallbackQueryHandler(check_subscription_callback, pattern="check_subscription"))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     print("Бот запущено... Натисни Ctrl+C щоб зупинити.")
