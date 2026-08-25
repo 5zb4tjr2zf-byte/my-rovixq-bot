@@ -253,11 +253,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if text == INVITE_BUTTON:
         link = f"https://t.me/{BOT_USERNAME}?start=ref_{user.id}"
         await update.message.reply_text(
-            f"🔗 Твоє реферальне посилання:\n`{link}`\n\n"
+            f"🔗 Твоє реферальне посилання:\n{link}\n\n"
             f"За кожного друга, який запустить бота за цим посиланням, "
-            f"ти отримаєш *{REFERRAL_BONUS}$* на баланс 💰",
-            parse_mode="Markdown",
+            f"ти отримаєш {REFERRAL_BONUS}$ на баланс 💰",
             reply_markup=KEYBOARD,
+            disable_web_page_preview=True,
         )
         return
 
