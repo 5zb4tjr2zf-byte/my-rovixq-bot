@@ -17,6 +17,14 @@ logging.basicConfig(
 
 TOKEN = os.environ.get("BOT_TOKEN")
 
+# Відповідність команд і ID монет на CoinGecko
+COINS = {
+    "btc": {"id": "bitcoin", "name": "Bitcoin (BTC)", "emoji": "₿"},
+    "eth": {"id": "ethereum", "name": "Ethereum (ETH)", "emoji": "Ξ"},
+    "ton": {"id": "the-open-network", "name": "Toncoin (TON)", "emoji": "💎"},
+    "sol": {"id": "solana", "name": "Solana (SOL)", "emoji": "◎"},
+}
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
@@ -26,46 +34,88 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Команди:\n"
         "/start — почати\n"
         "/help — допомога\n"
-        "/btc — поточна ціна біткоїна"
+        "/btc — ціна Bitcoin\n"
+        "/eth — ціна Ethereum\n"
+        "/ton — ціна Toncoin\n"
+        "/sol — ціна Solana\n"
+        "/crypto — всі монети одразу"
     )
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "Напиши /btc, щоб дізнатись поточну ціну біткоїна.\n"
-        "Або просто напиши будь-який текст — я його повторю."
+        "Напиши /btc, /eth, /ton або /sol, щоб дізнатись ціну конкретної монети.\n"
+        "Або /crypto, щоб побачити всі одразу.\n"
+        "Просто текст — я його повторю."
     )
 
 
-async def btc_price(update: Update, context: ContextTypes.DEFAULT_TYPE):
+def format_coin(coin_id: str, name: str, emoji: str, data: dict) -> str:
+    usd = data[coin_id]["usd"]
+    uah = data[coin_id]["uah"]
+    change = data[coin_id]["usd_24h_change"]
+    arrow = "🟢📈" if change >= 0 else "🔴📉"
+
+    if usd >= 1:
+        usd_str = f"{usd:,.2f}"
+        uah_str = f"{uah:,.2f}"
+    else:
+        usd_str = f"{usd:.6f}"
+        uah_str = f"{uah:.6f}"
+
+    return (
+        f"{emoji} *{name}*\n"
+        f"💵 {usd_str} USD\n"
+        f"💴 {uah_str} UAH\n"
+        f"{arrow} {change:+.2f}% за 24 год"
+    )
+
+
+async def get_prices(coin_ids: list) -> dict:
+    response = requests.get(
+        "https://api.coingecko.com/api/v3/simple/price",
+        params={
+            "ids": ",".join(coin_ids),
+            "vs_currencies": "usd,uah",
+            "include_24hr_change": "true",
+        },
+        timeout=10,
+    )
+    return response.json()
+
+
+async def coin_price(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    command = update.message.text.replace("/", "").split("@")[0].lower()
+    coin = COINS.get(command)
+    if not coin:
+        return
+
     try:
-        response = requests.get(
-            "https://api.coingecko.com/api/v3/simple/price",
-            params={
-                "ids": "bitcoin",
-                "vs_currencies": "usd,uah",
-                "include_24hr_change": "true",
-            },
-            timeout=10,
-        )
-        data = response.json()
-        usd = data["bitcoin"]["usd"]
-        uah = data["bitcoin"]["uah"]
-        change = data["bitcoin"]["usd_24h_change"]
-
-        arrow = "🟢📈" if change >= 0 else "🔴📉"
-
-        text = (
-            "₿ *Bitcoin (BTC)*\n\n"
-            f"💵 {usd:,.0f} USD\n"
-            f"💴 {uah:,.0f} UAH\n"
-            f"{arrow} {change:+.2f}% за 24 год"
-        )
+        data = await get_prices([coin["id"]])
+        text = format_coin(coin["id"], coin["name"], coin["emoji"], data)
         await update.message.reply_text(text, parse_mode="Markdown")
     except Exception as e:
-        logging.error(f"Помилка отримання ціни BTC: {e}")
+        logging.error(f"Помилка отримання ціни {command}: {e}")
         await update.message.reply_text(
-            "Не вдалось отримати ціну біткоїна 😕 Спробуй ще раз трохи пізніше."
+            "Не вдалось отримати ціну 😕 Спробуй ще раз трохи пізніше."
+        )
+
+
+async def crypto_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        coin_ids = [c["id"] for c in COINS.values()]
+        data = await get_prices(coin_ids)
+
+        parts = []
+        for coin in COINS.values():
+            parts.append(format_coin(coin["id"], coin["name"], coin["emoji"], data))
+
+        text = "\n\n".join(parts)
+        await update.message.reply_text(text, parse_mode="Markdown")
+    except Exception as e:
+        logging.error(f"Помилка отримання цін: {e}")
+        await update.message.reply_text(
+            "Не вдалось отримати ціни 😕 Спробуй ще раз трохи пізніше."
         )
 
 
@@ -84,7 +134,11 @@ def main():
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", help_command))
-    app.add_handler(CommandHandler("btc", btc_price))
+    app.add_handler(CommandHandler("btc", coin_price))
+    app.add_handler(CommandHandler("eth", coin_price))
+    app.add_handler(CommandHandler("ton", coin_price))
+    app.add_handler(CommandHandler("sol", coin_price))
+    app.add_handler(CommandHandler("crypto", crypto_all))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
 
     print("Бот запущено... Натисни Ctrl+C щоб зупинити.")
