@@ -22,7 +22,8 @@ BOT_USERNAME = "rovixq_bot"
 CHANNEL_USERNAME = "rxchanel"
 CHANNEL_LINK = f"https://t.me/{CHANNEL_USERNAME}"
 
-REFERRAL_BONUS = 0.7  # $ за каждого реферала
+REFERRAL_BONUS = 0.3  # $ за каждого реферала
+MIN_WITHDRAW = 3.0    # минимальная сумма вывода
 
 DB_PATH = "bot_data.db"
 
@@ -88,13 +89,51 @@ def credit_referrer(referrer_id: int, amount: float):
     conn.close()
 
 
+def subtract_balance(user_id: int, amount: float):
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+    cur.execute("UPDATE users SET balance = balance - ? WHERE user_id = ?", (amount, user_id))
+    conn.commit()
+    conn.close()
+
+
+def save_withdrawal(user_id: int, amount: float, method: str, details: str):
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+    cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS withdrawals (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            amount REAL,
+            method TEXT,
+            details TEXT,
+            status TEXT DEFAULT 'pending'
+        )
+        """
+    )
+    cur.execute(
+        "INSERT INTO withdrawals (user_id, amount, method, details) VALUES (?, ?, ?, ?)",
+        (user_id, amount, method, details),
+    )
+    conn.commit()
+    conn.close()
+
+
 # ---------- Клавиатуры ----------
 
 BALANCE_BUTTON = "💰 Баланс"
 INVITE_BUTTON = "🔗 Пригласить друзей"
+WITHDRAW_BUTTON = "💸 Вывод"
+CANCEL_BUTTON = "❌ Отмена"
 
 KEYBOARD = ReplyKeyboardMarkup(
-    [[BALANCE_BUTTON, INVITE_BUTTON]],
+    [[BALANCE_BUTTON, INVITE_BUTTON], [WITHDRAW_BUTTON]],
+    resize_keyboard=True,
+)
+
+CANCEL_KEYBOARD = ReplyKeyboardMarkup(
+    [[CANCEL_BUTTON]],
     resize_keyboard=True,
 )
 
@@ -102,6 +141,13 @@ SUBSCRIBE_KEYBOARD = InlineKeyboardMarkup(
     [
         [InlineKeyboardButton("📢 Подписаться на канал", url=CHANNEL_LINK)],
         [InlineKeyboardButton("✅ Я подписался", callback_data="check_subscription")],
+    ]
+)
+
+METHOD_KEYBOARD = InlineKeyboardMarkup(
+    [
+        [InlineKeyboardButton("💳 Карта (Украина)", callback_data="method_card")],
+        [InlineKeyboardButton("🪙 Крипта", callback_data="method_crypto")],
     ]
 )
 
@@ -189,6 +235,23 @@ async def check_subscription_callback(update: Update, context: ContextTypes.DEFA
         await query.answer("Ты ещё не подписался на канал 🙁", show_alert=True)
 
 
+async def method_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    user = query.from_user
+    await query.answer()
+
+    method = "Карта (Украина)" if query.data == "method_card" else "Крипта"
+    context.user_data["withdraw_method"] = method
+    context.user_data["awaiting_withdraw_details"] = True
+
+    if method == "Карта (Украина)":
+        prompt = "Введи номер карты для вывода:"
+    else:
+        prompt = "Введи адрес крипто-кошелька для вывода:"
+
+    await query.edit_message_text(f"Способ оплаты: {method}\n\n{prompt}")
+
+
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     text = update.message.text
@@ -204,6 +267,67 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     await try_credit_referral(user.id, context)
+
+    # --- Отмена на любом этапе вывода ---
+    if text == CANCEL_BUTTON:
+        context.user_data.clear()
+        await update.message.reply_text("Отменено.", reply_markup=KEYBOARD)
+        return
+
+    # --- Шаг 1: ждём сумму вывода ---
+    if context.user_data.get("awaiting_withdraw_amount"):
+        row = get_user(user.id)
+        balance = row[1] if row else 0
+        try:
+            amount = float(text.replace(",", ".").replace("$", "").strip())
+        except ValueError:
+            await update.message.reply_text(
+                "Введи сумму числом, например: 5 или 10.5",
+                reply_markup=CANCEL_KEYBOARD,
+            )
+            return
+
+        if amount < MIN_WITHDRAW:
+            await update.message.reply_text(
+                f"Минимальная сумма вывода — {MIN_WITHDRAW}$. Введи другую сумму:",
+                reply_markup=CANCEL_KEYBOARD,
+            )
+            return
+
+        if amount > balance:
+            await update.message.reply_text(
+                f"На балансе только {balance:.2f}$. Введи сумму не больше этой:",
+                reply_markup=CANCEL_KEYBOARD,
+            )
+            return
+
+        context.user_data["awaiting_withdraw_amount"] = False
+        context.user_data["withdraw_amount"] = amount
+        await update.message.reply_text(
+            "Выбери способ оплаты:",
+            reply_markup=METHOD_KEYBOARD,
+        )
+        return
+
+    # --- Шаг 3: ждём реквизиты (карта/кошелёк) ---
+    if context.user_data.get("awaiting_withdraw_details"):
+        amount = context.user_data.get("withdraw_amount")
+        method = context.user_data.get("withdraw_method")
+        details = text.strip()
+
+        subtract_balance(user.id, amount)
+        save_withdrawal(user.id, amount, method, details)
+        context.user_data.clear()
+
+        await update.message.reply_text(
+            f"✅ Заявка на вывод создана!\n\n"
+            f"Сумма: {amount:.2f}$\n"
+            f"Способ: {method}\n"
+            f"Реквизиты: {details}\n\n"
+            f"Заявка в обработке.",
+            reply_markup=KEYBOARD,
+        )
+        return
 
     if text == BALANCE_BUTTON:
         row = get_user(user.id)
@@ -226,6 +350,25 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
+    if text == WITHDRAW_BUTTON:
+        row = get_user(user.id)
+        balance = row[1] if row else 0
+        if balance < MIN_WITHDRAW:
+            await update.message.reply_text(
+                f"Минимальная сумма вывода — {MIN_WITHDRAW}$.\n"
+                f"Твой баланс: {balance:.2f}$. Пригласи ещё друзей 👥",
+                reply_markup=KEYBOARD,
+            )
+            return
+
+        context.user_data["awaiting_withdraw_amount"] = True
+        await update.message.reply_text(
+            f"Твой баланс: {balance:.2f}$\n"
+            f"Введи сумму для вывода (минимум {MIN_WITHDRAW}$):",
+            reply_markup=CANCEL_KEYBOARD,
+        )
+        return
+
     await update.message.reply_text(
         "Используй кнопки снизу 👇",
         reply_markup=KEYBOARD,
@@ -242,6 +385,7 @@ def main():
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(check_subscription_callback, pattern="check_subscription"))
+    app.add_handler(CallbackQueryHandler(method_callback, pattern="^method_"))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     print("Бот запущен...")
