@@ -1,7 +1,14 @@
 import logging
 import os
 import sqlite3
-from telegram import Update, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import (
+    Update,
+    ReplyKeyboardMarkup,
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+    KeyboardButton,
+    WebAppInfo,
+)
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
@@ -18,6 +25,7 @@ logging.basicConfig(
 
 TOKEN = os.environ.get("BOT_TOKEN")
 BOT_USERNAME = "rovixq_bot"
+WEBAPP_URL = "https://5zb4tjr2zf-byte.github.io/my-rovixq-bot/"
 
 CHANNEL_USERNAME = "rxchanel"
 CHANNEL_LINK = f"https://t.me/{CHANNEL_USERNAME}"
@@ -128,7 +136,11 @@ WITHDRAW_BUTTON = "💸 Вывод"
 CANCEL_BUTTON = "❌ Отмена"
 
 KEYBOARD = ReplyKeyboardMarkup(
-    [[BALANCE_BUTTON, INVITE_BUTTON], [WITHDRAW_BUTTON]],
+    [
+        [KeyboardButton("🚀 Открыть приложение", web_app=WebAppInfo(url=WEBAPP_URL))],
+        [BALANCE_BUTTON, INVITE_BUTTON],
+        [WITHDRAW_BUTTON],
+    ],
     resize_keyboard=True,
 )
 
