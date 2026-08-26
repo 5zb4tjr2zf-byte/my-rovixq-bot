@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="ru">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -10,21 +10,21 @@
 
   :root {
     --bg: #0B0E14;
-    --bg-glow: #12182B;
     --panel: #131826;
+    --panel-active: #1A2133;
     --line: #232A3D;
     --text: #EDEFF5;
     --muted: #8993AB;
     --accent: #5EE6C4;
     --accent-2: #7C8CFF;
+    --red: #FF6B6B;
   }
 
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
   html, body {
     margin: 0;
     padding: 0;
-    height: 100%;
     background: var(--bg);
     color: var(--text);
     font-family: 'Space Grotesk', sans-serif;
@@ -32,11 +32,8 @@
   }
 
   body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     min-height: 100vh;
-    padding: 24px;
+    padding: 24px 20px 40px;
     position: relative;
   }
 
@@ -46,19 +43,18 @@
     left: 50%;
     transform: translateX(-50%);
     width: 140%;
-    height: 60%;
-    background: radial-gradient(ellipse at center, rgba(94,230,196,0.18) 0%, rgba(124,140,255,0.10) 40%, transparent 70%);
+    height: 50%;
+    background: radial-gradient(ellipse at center, rgba(94,230,196,0.16) 0%, rgba(124,140,255,0.08) 40%, transparent 70%);
     filter: blur(40px);
     pointer-events: none;
     z-index: 0;
   }
 
-  .card {
+  .wrap {
     position: relative;
     z-index: 1;
-    width: 100%;
     max-width: 420px;
-    text-align: center;
+    margin: 0 auto;
   }
 
   .ticker {
@@ -66,16 +62,14 @@
     align-items: center;
     gap: 8px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 0.12em;
+    font-size: 11px;
+    letter-spacing: 0.1em;
     color: var(--muted);
     border: 1px solid var(--line);
     background: var(--panel);
-    padding: 6px 14px;
+    padding: 6px 12px;
     border-radius: 100px;
-    margin-bottom: 32px;
-    opacity: 0;
-    animation: fadeUp 0.6s ease forwards;
+    margin-bottom: 20px;
   }
 
   .dot {
@@ -86,25 +80,11 @@
     box-shadow: 0 0 8px var(--accent);
   }
 
-  .glyph {
-    font-size: 56px;
-    line-height: 1;
-    margin-bottom: 20px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    opacity: 0;
-    animation: fadeUp 0.6s ease 0.1s forwards;
-  }
-
   h1 {
-    font-size: 30px;
+    font-size: 24px;
     font-weight: 700;
-    margin: 0 0 10px;
+    margin: 0 0 6px;
     letter-spacing: -0.02em;
-    opacity: 0;
-    animation: fadeUp 0.6s ease 0.2s forwards;
   }
 
   h1 .name {
@@ -115,76 +95,252 @@
   }
 
   p.sub {
-    font-size: 15px;
+    font-size: 14px;
     color: var(--muted);
     line-height: 1.5;
-    margin: 0 0 36px;
-    opacity: 0;
-    animation: fadeUp 0.6s ease 0.3s forwards;
+    margin: 0 0 24px;
   }
 
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    margin-bottom: 28px;
-    opacity: 0;
-    animation: fadeUp 0.6s ease 0.4s forwards;
+  .coins {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 
   .coin {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     border: 1px solid var(--line);
     background: var(--panel);
-    border-radius: 12px;
-    padding: 12px 4px;
-    font-size: 20px;
+    border-radius: 14px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
   }
 
-  .coin .sym {
-    display: block;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    margin-top: 4px;
-    letter-spacing: 0.05em;
+  .coin:active {
+    transform: scale(0.98);
+    background: var(--panel-active);
   }
 
-  .footer-line {
+  .coin.open {
+    border-color: var(--accent);
+    background: var(--panel-active);
+  }
+
+  .coin-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .coin-emoji {
+    font-size: 22px;
+    width: 30px;
+    text-align: center;
+  }
+
+  .coin-name {
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .coin-sym {
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
     color: var(--muted);
-    letter-spacing: 0.08em;
-    opacity: 0;
-    animation: fadeUp 0.6s ease 0.5s forwards;
+    display: block;
+    margin-top: 1px;
   }
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+  .coin-right {
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    min-width: 70px;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .ticker, .glyph, h1, p.sub, .grid, .footer-line {
-      animation: none;
-      opacity: 1;
-    }
+  .coin-price {
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .coin-change {
+    font-size: 11px;
+    margin-top: 2px;
+  }
+
+  .coin-change.up { color: var(--accent); }
+  .coin-change.down { color: var(--red); }
+
+  .details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease;
+  }
+
+  .coin.open .details {
+    max-height: 60px;
+  }
+
+  .details-inner {
+    padding-top: 12px;
+    margin-top: 12px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .details-inner b {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .footer-line {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    margin-top: 28px;
+  }
+
+  .spin {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--line);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ---- Экран детали монеты ---- */
+  .screen {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 10;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .screen.active {
+    display: flex;
+  }
+
+  .back-btn {
+    position: absolute;
+    top: 24px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    padding: 8px 14px;
+    border-radius: 100px;
+    cursor: pointer;
+  }
+
+  .back-btn:active {
+    background: var(--panel-active);
+  }
+
+  .big-glyph {
+    font-size: 96px;
+    line-height: 1;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .big-name {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
   }
 </style>
 </head>
 <body>
   <div class="glow"></div>
-  <div class="card">
+  <div class="wrap" id="mainScreen">
     <div class="ticker"><span class="dot"></span>LIVE MARKET DATA</div>
-    <div class="glyph">₿</div>
-    <h1>Привіт, <span class="name" id="username">друже</span></h1>
-    <p class="sub">Ти в застосунку rovixq.<br>Тут стежимо за курсом BTC, ETH, TON і SOL.</p>
-    <div class="grid">
-      <div class="coin">₿<span class="sym">BTC</span></div>
-      <div class="coin">Ξ<span class="sym">ETH</span></div>
-      <div class="coin">💎<span class="sym">TON</span></div>
-      <div class="coin">◎<span class="sym">SOL</span></div>
+    <h1>Привет, <span class="name" id="username">друг</span></h1>
+    <p class="sub">Нажми на монету, чтобы увидеть её текущий курс.</p>
+
+    <div class="coins" id="coins">
+      <div class="coin" data-id="bitcoin" data-sym="BTC">
+        <div class="coin-left">
+          <div class="coin-emoji">₿</div>
+          <div>
+            <div class="coin-name">Bitcoin</div>
+            <span class="coin-sym">BTC</span>
+          </div>
+        </div>
+        <div class="coin-right"><span class="spin"></span></div>
+      </div>
+
+      <div class="coin" data-id="ethereum" data-sym="ETH">
+        <div class="coin-left">
+          <div class="coin-emoji">Ξ</div>
+          <div>
+            <div class="coin-name">Ethereum</div>
+            <span class="coin-sym">ETH</span>
+          </div>
+        </div>
+        <div class="coin-right"><span class="spin"></span></div>
+      </div>
+
+      <div class="coin" data-id="the-open-network" data-sym="TON">
+        <div class="coin-left">
+          <div class="coin-emoji">💎</div>
+          <div>
+            <div class="coin-name">Toncoin</div>
+            <span class="coin-sym">TON</span>
+          </div>
+        </div>
+        <div class="coin-right"><span class="spin"></span></div>
+      </div>
+
+      <div class="coin" data-id="solana" data-sym="SOL">
+        <div class="coin-left">
+          <div class="coin-emoji">◎</div>
+          <div>
+            <div class="coin-name">Solana</div>
+            <span class="coin-sym">SOL</span>
+          </div>
+        </div>
+        <div class="coin-right"><span class="spin"></span></div>
+      </div>
     </div>
+
     <div class="footer-line">rovixq_bot · powered by CoinGecko</div>
+  </div>
+
+  <!-- Экран Bitcoin -->
+  <div class="screen" id="screen-bitcoin">
+    <button class="back-btn" id="backBtn">← Назад</button>
+    <div class="big-glyph">₿</div>
+    <div class="big-name">Bitcoin</div>
   </div>
 
   <script>
@@ -196,8 +352,86 @@
       if (user?.first_name) {
         document.getElementById('username').textContent = user.first_name;
       }
-      document.documentElement.style.setProperty('--bg', tg.themeParams?.bg_color || '#0B0E14');
     }
+
+    const coinEls = document.querySelectorAll('.coin');
+    const ids = Array.from(coinEls).map(el => el.dataset.id).join(',');
+    let priceData = {};
+
+    async function loadPrices() {
+      try {
+        const res = await fetch(
+          `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd,uah&include_24hr_change=true`
+        );
+        priceData = await res.json();
+        renderPrices();
+      } catch (e) {
+        coinEls.forEach(el => {
+          el.querySelector('.coin-right').innerHTML = '<span style="color:#FF6B6B">ошибка</span>';
+        });
+      }
+    }
+
+    function formatUsd(v) {
+      return v >= 1 ? v.toLocaleString('en-US', {maximumFractionDigits: 2}) : v.toFixed(6);
+    }
+    function formatUah(v) {
+      return v >= 1 ? v.toLocaleString('en-US', {maximumFractionDigits: 2}) : v.toFixed(6);
+    }
+
+    function renderPrices() {
+      coinEls.forEach(el => {
+        const id = el.dataset.id;
+        const d = priceData[id];
+        if (!d) return;
+        const change = d.usd_24h_change || 0;
+        const cls = change >= 0 ? 'up' : 'down';
+        const arrow = change >= 0 ? '▲' : '▼';
+
+        el.querySelector('.coin-right').innerHTML = `
+          <div class="coin-price">$${formatUsd(d.usd)}</div>
+          <div class="coin-change ${cls}">${arrow} ${Math.abs(change).toFixed(2)}%</div>
+        `;
+
+        let details = el.querySelector('.details');
+        if (!details) {
+          details = document.createElement('div');
+          details.className = 'details';
+          el.appendChild(details);
+        }
+        details.innerHTML = `
+          <div class="details-inner">
+            <span>В гривне</span>
+            <b>₴${formatUah(d.uah)}</b>
+          </div>
+        `;
+      });
+    }
+
+    coinEls.forEach(el => {
+      el.addEventListener('click', () => {
+        const id = el.dataset.id;
+        if (id === 'bitcoin') {
+          document.getElementById('mainScreen').style.display = 'none';
+          document.getElementById('screen-bitcoin').classList.add('active');
+          if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+          return;
+        }
+        const wasOpen = el.classList.contains('open');
+        coinEls.forEach(c => c.classList.remove('open'));
+        if (!wasOpen) el.classList.add('open');
+        if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+      });
+    });
+
+    document.getElementById('backBtn').addEventListener('click', () => {
+      document.getElementById('screen-bitcoin').classList.remove('active');
+      document.getElementById('mainScreen').style.display = '';
+      if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+    });
+
+    loadPrices();
+    setInterval(loadPrices, 30000);
   </script>
 </body>
 </html>
