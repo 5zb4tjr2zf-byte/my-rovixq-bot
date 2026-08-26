@@ -6,21 +6,19 @@
 <title>rovixq</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
   :root {
-    --bg: #0B0E14;
+    --bg: #060A18;
     --panel: #131826;
-    --panel-active: #1A2133;
     --line: #232A3D;
     --text: #EDEFF5;
     --muted: #8993AB;
-    --accent: #5EE6C4;
-    --accent-2: #7C8CFF;
-    --red: #FF6B6B;
+    --accent: #F7931A;
+    --accent-2: #FFC773;
   }
 
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
 
   html, body {
     margin: 0;
@@ -28,204 +26,239 @@
     background: var(--bg);
     color: var(--text);
     font-family: 'Space Grotesk', sans-serif;
-    overflow-x: hidden;
+    overflow: hidden;
+    height: 100%;
   }
 
   body {
-    min-height: 100vh;
-    padding: 24px 20px 40px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 20px 32px;
     position: relative;
   }
 
   .glow {
     position: fixed;
-    top: -20%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 140%;
-    height: 50%;
-    background: radial-gradient(ellipse at center, rgba(94,230,196,0.16) 0%, rgba(124,140,255,0.08) 40%, transparent 70%);
-    filter: blur(40px);
+    top: -30%;
+    left: -30%;
+    width: 160%;
+    height: 160%;
+    background: radial-gradient(ellipse at center, rgba(247,147,26,0.20) 0%, rgba(255,199,115,0.10) 35%, transparent 65%);
+    filter: blur(60px);
     pointer-events: none;
     z-index: 0;
+    animation: drift 10s ease-in-out infinite;
   }
 
-  .wrap {
+  @keyframes drift {
+    0%   { transform: translate(0%, 0%); }
+    25%  { transform: translate(15%, 20%); }
+    50%  { transform: translate(-10%, 30%); }
+    75%  { transform: translate(-20%, 5%); }
+    100% { transform: translate(0%, 0%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .glow { animation: none; }
+  }
+
+  .top {
     position: relative;
     z-index: 1;
-    max-width: 420px;
-    margin: 0 auto;
+    text-align: center;
+    width: 100%;
   }
 
-  .ticker {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.1em;
+  .greeting {
+    font-size: 15px;
     color: var(--muted);
-    border: 1px solid var(--line);
-    background: var(--panel);
-    padding: 6px 12px;
-    border-radius: 100px;
-    margin-bottom: 20px;
+    margin-bottom: 4px;
   }
 
-  .dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 8px var(--accent);
+  .greeting b {
+    color: var(--text);
+    font-weight: 600;
   }
 
-  h1 {
-    font-size: 24px;
-    font-weight: 700;
-    margin: 0 0 6px;
+  .balance {
+    font-size: 44px;
+    font-weight: 800;
     letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
   }
 
-  h1 .name {
+  .balance .coin-sym {
+    font-size: 30px;
     background: linear-gradient(135deg, var(--accent), var(--accent-2));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
-  p.sub {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.5;
-    margin: 0 0 24px;
+  .middle {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
   }
 
-  .coins {
+  .coin-wrap {
+    position: relative;
+    width: 240px;
+    height: 240px;
+  }
+
+  .coin-btn {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: none;
+    background:
+      radial-gradient(circle at 35% 30%, #FFD98A 0%, #F7931A 45%, #C96C0C 100%);
+    box-shadow:
+      0 0 0 8px rgba(247,147,26,0.08),
+      0 0 60px rgba(247,147,26,0.35),
+      inset 0 -8px 20px rgba(0,0,0,0.25),
+      inset 0 8px 16px rgba(255,255,255,0.25);
+    font-size: 110px;
+    font-weight: 800;
+    color: #7A4300;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.06s ease;
+    padding: 0;
+  }
+
+  .coin-btn:active {
+    transform: scale(0.94);
+  }
+
+  .float {
+    position: absolute;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent-2);
+    pointer-events: none;
+    animation: floatUp 0.7s ease-out forwards;
+    left: 50%;
+    top: 50%;
+  }
+
+  @keyframes floatUp {
+    0%   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -160%) scale(1.3); }
+  }
+
+  .bottom {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    width: 100%;
+  }
+
+  .energy-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 280px;
+    margin: 0 auto 10px;
+  }
+
+  .energy-icon {
+    font-size: 16px;
+  }
+
+  .energy-bar {
+    flex: 1;
+    height: 10px;
+    border-radius: 100px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+
+  .energy-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    border-radius: 100px;
+    transition: width 0.15s ease;
+  }
+
+  .energy-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    min-width: 74px;
+    text-align: right;
+  }
+
+  .actions-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    max-width: 320px;
+    margin: 14px auto 0;
+  }
+
+  .action-btn {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-  }
-
-  .coin {
-    display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 4px;
+    width: 68px;
+    height: 60px;
+    border-radius: 16px;
     border: 1px solid var(--line);
     background: var(--panel);
-    border-radius: 14px;
-    padding: 14px 16px;
-    cursor: pointer;
-    transition: background 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
-  }
-
-  .coin:active {
-    transform: scale(0.98);
-    background: var(--panel-active);
-  }
-
-  .coin.open {
-    border-color: var(--accent);
-    background: var(--panel-active);
-  }
-
-  .coin-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .coin-emoji {
-    font-size: 22px;
-    width: 30px;
-    text-align: center;
-  }
-
-  .coin-name {
-    font-size: 15px;
-    font-weight: 500;
-  }
-
-  .coin-sym {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    display: block;
-    margin-top: 1px;
-  }
-
-  .coin-right {
-    text-align: right;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    color: var(--muted);
-    min-width: 70px;
-  }
-
-  .coin-price {
     color: var(--text);
-    font-size: 15px;
-    font-weight: 500;
+    cursor: pointer;
   }
 
-  .coin-change {
-    font-size: 11px;
-    margin-top: 2px;
+  .action-btn:active {
+    background: #1A2133;
+    transform: scale(0.96);
   }
 
-  .coin-change.up { color: var(--accent); }
-  .coin-change.down { color: var(--red); }
-
-  .details {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.25s ease;
+  .action-btn .icon {
+    font-size: 20px;
   }
 
-  .coin.open .details {
-    max-height: 60px;
+  .action-btn .label {
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
   }
 
-  .details-inner {
-    padding-top: 12px;
-    margin-top: 12px;
-    border-top: 1px solid var(--line);
-    display: flex;
-    justify-content: space-between;
+  .taps-left {
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
     color: var(--muted);
-  }
-
-  .details-inner b {
-    color: var(--text);
-    font-weight: 500;
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
   }
 
   .footer-line {
-    text-align: center;
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
     color: var(--muted);
     letter-spacing: 0.06em;
-    margin-top: 28px;
+    margin-top: 8px;
   }
 
-  .spin {
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    border: 2px solid var(--line);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-  }
-
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-
-  /* ---- Экран детали монеты ---- */
+  /* ---- Полноэкранные экраны ---- */
   .screen {
     position: fixed;
     inset: 0;
@@ -260,87 +293,80 @@
   }
 
   .back-btn:active {
-    background: var(--panel-active);
+    background: #1A2133;
   }
 
   .big-glyph {
-    font-size: 96px;
+    font-size: 80px;
     line-height: 1;
-    margin-bottom: 20px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
   }
 
   .big-name {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 700;
     letter-spacing: -0.02em;
+  }
+
+  .screen-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 8px;
   }
 </style>
 </head>
 <body>
   <div class="glow"></div>
-  <div class="wrap" id="mainScreen">
-    <div class="ticker"><span class="dot"></span>LIVE MARKET DATA</div>
-    <h1>Привет, <span class="name" id="username">друг</span></h1>
-    <p class="sub">Нажми на монету, чтобы увидеть её текущий курс.</p>
 
-    <div class="coins" id="coins">
-      <div class="coin" data-id="bitcoin" data-sym="BTC">
-        <div class="coin-left">
-          <div class="coin-emoji">₿</div>
-          <div>
-            <div class="coin-name">Bitcoin</div>
-            <span class="coin-sym">BTC</span>
-          </div>
-        </div>
-        <div class="coin-right"><span class="spin"></span></div>
-      </div>
+  <div id="mainScreen" style="display:flex; flex-direction:column; align-items:center; justify-content:space-between; width:100%; height:100%; position:relative; z-index:1;">
+    <div class="top">
+      <div class="greeting">Привет, <b id="username">друг</b> 👋</div>
+      <div class="balance"><span class="coin-sym">₿</span><span id="score">0</span></div>
+    </div>
 
-      <div class="coin" data-id="ethereum" data-sym="ETH">
-        <div class="coin-left">
-          <div class="coin-emoji">Ξ</div>
-          <div>
-            <div class="coin-name">Ethereum</div>
-            <span class="coin-sym">ETH</span>
-          </div>
-        </div>
-        <div class="coin-right"><span class="spin"></span></div>
-      </div>
-
-      <div class="coin" data-id="the-open-network" data-sym="TON">
-        <div class="coin-left">
-          <div class="coin-emoji">💎</div>
-          <div>
-            <div class="coin-name">Toncoin</div>
-            <span class="coin-sym">TON</span>
-          </div>
-        </div>
-        <div class="coin-right"><span class="spin"></span></div>
-      </div>
-
-      <div class="coin" data-id="solana" data-sym="SOL">
-        <div class="coin-left">
-          <div class="coin-emoji">◎</div>
-          <div>
-            <div class="coin-name">Solana</div>
-            <span class="coin-sym">SOL</span>
-          </div>
-        </div>
-        <div class="coin-right"><span class="spin"></span></div>
+    <div class="middle">
+      <div class="coin-wrap" id="coinWrap">
+        <button class="coin-btn" id="coinBtn">₿</button>
       </div>
     </div>
 
-    <div class="footer-line">rovixq_bot · powered by CoinGecko</div>
+    <div class="bottom">
+      <div class="energy-row">
+        <span class="energy-icon">⚡</span>
+        <div class="energy-bar"><div class="energy-fill" id="energyFill"></div></div>
+        <span class="energy-text" id="energyText">5000/5000</span>
+      </div>
+      <div class="taps-left" id="tapHint">Нажимай на монету, чтобы зарабатывать</div>
+
+      <div class="actions-row">
+        <button class="action-btn" id="btnShop">
+          <span class="icon">🛒</span>
+          <span class="label">Магазин</span>
+        </button>
+        <button class="action-btn" id="btnTasks">
+          <span class="icon">📋</span>
+          <span class="label">Задания</span>
+        </button>
+        <button class="action-btn" id="btnFriends">
+          <span class="icon">👥</span>
+          <span class="label">Друзья</span>
+        </button>
+        <button class="action-btn" id="btnRank">
+          <span class="icon">🏆</span>
+          <span class="label">Рейтинг</span>
+        </button>
+      </div>
+
+      <div class="footer-line">rovixq_bot · tap to earn</div>
+    </div>
   </div>
 
-  <!-- Экран Bitcoin -->
-  <div class="screen" id="screen-bitcoin">
-    <button class="back-btn" id="backBtn">← Назад</button>
-    <div class="big-glyph">₿</div>
-    <div class="big-name">Bitcoin</div>
+  <!-- Экран магазина -->
+  <div class="screen" id="screen-shop">
+    <button class="back-btn" id="backShopBtn">← Назад</button>
+    <div class="big-glyph">🛒</div>
+    <div class="big-name">Магазин</div>
+    <p class="screen-sub">Скоро здесь появятся улучшения</p>
   </div>
 
   <script>
@@ -354,84 +380,128 @@
       }
     }
 
-    const coinEls = document.querySelectorAll('.coin');
-    const ids = Array.from(coinEls).map(el => el.dataset.id).join(',');
-    let priceData = {};
+    const scoreEl = document.getElementById('score');
+    const coinBtn = document.getElementById('coinBtn');
+    const coinWrap = document.getElementById('coinWrap');
+    const energyFill = document.getElementById('energyFill');
+    const energyText = document.getElementById('energyText');
+    const tapHint = document.getElementById('tapHint');
 
-    async function loadPrices() {
-      try {
-        const res = await fetch(
-          `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd,uah&include_24hr_change=true`
-        );
-        priceData = await res.json();
-        renderPrices();
-      } catch (e) {
-        coinEls.forEach(el => {
-          el.querySelector('.coin-right').innerHTML = '<span style="color:#FF6B6B">ошибка</span>';
-        });
+    const MAX_ENERGY = 5000;
+    const REGEN_PER_SEC = 1; // сколько энергии восстанавливается в секунду
+
+    let score = parseInt(localStorage.getItem('btc_taps') || '0', 10);
+    let energy = parseInt(localStorage.getItem('btc_energy') || String(MAX_ENERGY), 10);
+
+    scoreEl.textContent = score.toLocaleString('en-US');
+
+    function updateEnergyUI() {
+      const pct = Math.max(0, Math.min(100, (energy / MAX_ENERGY) * 100));
+      energyFill.style.width = pct + '%';
+      energyText.textContent = `${energy}/${MAX_ENERGY}`;
+      tapHint.textContent = energy > 0
+        ? 'Нажимай на монету, чтобы зарабатывать'
+        : 'Энергия закончилась — теперь +1 за тап';
+    }
+    updateEnergyUI();
+
+    function spawnFloat(x, y, amount) {
+      const f = document.createElement('div');
+      f.className = 'float';
+      f.textContent = '+' + amount;
+      f.style.left = x + 'px';
+      f.style.top = y + 'px';
+      coinWrap.appendChild(f);
+      setTimeout(() => f.remove(), 700);
+    }
+
+    coinBtn.addEventListener('click', (e) => {
+      let gain;
+      if (energy >= 5) {
+        gain = 5;
+        energy -= 5;
+      } else {
+        gain = 1;
       }
-    }
 
-    function formatUsd(v) {
-      return v >= 1 ? v.toLocaleString('en-US', {maximumFractionDigits: 2}) : v.toFixed(6);
-    }
-    function formatUah(v) {
-      return v >= 1 ? v.toLocaleString('en-US', {maximumFractionDigits: 2}) : v.toFixed(6);
-    }
+      score += gain;
+      scoreEl.textContent = score.toLocaleString('en-US');
+      localStorage.setItem('btc_taps', score);
+      localStorage.setItem('btc_energy', energy);
+      updateEnergyUI();
 
-    function renderPrices() {
-      coinEls.forEach(el => {
-        const id = el.dataset.id;
-        const d = priceData[id];
-        if (!d) return;
-        const change = d.usd_24h_change || 0;
-        const cls = change >= 0 ? 'up' : 'down';
-        const arrow = change >= 0 ? '▲' : '▼';
+      const rect = coinWrap.getBoundingClientRect();
+      const x = (e.clientX || rect.width / 2) - rect.left;
+      const y = (e.clientY || rect.height / 2) - rect.top;
+      spawnFloat(x, y, gain);
 
-        el.querySelector('.coin-right').innerHTML = `
-          <div class="coin-price">$${formatUsd(d.usd)}</div>
-          <div class="coin-change ${cls}">${arrow} ${Math.abs(change).toFixed(2)}%</div>
-        `;
-
-        let details = el.querySelector('.details');
-        if (!details) {
-          details = document.createElement('div');
-          details.className = 'details';
-          el.appendChild(details);
-        }
-        details.innerHTML = `
-          <div class="details-inner">
-            <span>В гривне</span>
-            <b>₴${formatUah(d.uah)}</b>
-          </div>
-        `;
-      });
-    }
-
-    coinEls.forEach(el => {
-      el.addEventListener('click', () => {
-        const id = el.dataset.id;
-        if (id === 'bitcoin') {
-          document.getElementById('mainScreen').style.display = 'none';
-          document.getElementById('screen-bitcoin').classList.add('active');
-          if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-          return;
-        }
-        const wasOpen = el.classList.contains('open');
-        coinEls.forEach(c => c.classList.remove('open'));
-        if (!wasOpen) el.classList.add('open');
-        if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-      });
-    });
-
-    document.getElementById('backBtn').addEventListener('click', () => {
-      document.getElementById('screen-bitcoin').classList.remove('active');
-      document.getElementById('mainScreen').style.display = '';
       if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
     });
 
-    loadPrices();
-    setInterval(loadPrices, 30000);
+    // Медленная регенерация энергии со временем
+    setInterval(() => {
+      if (energy < MAX_ENERGY) {
+        energy = Math.min(MAX_ENERGY, energy + REGEN_PER_SEC);
+        localStorage.setItem('btc_energy', energy);
+        updateEnergyUI();
+      }
+    }, 1000);
+
+    // ---- Переход в магазин ----
+    const mainScreen = document.getElementById('mainScreen');
+    const shopScreen = document.getElementById('screen-shop');
+
+    document.getElementById('btnShop').addEventListener('click', () => {
+      mainScreen.style.display = 'none';
+      shopScreen.classList.add('active');
+      if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+    });
+
+    document.getElementById('backShopBtn').addEventListener('click', () => {
+      shopScreen.classList.remove('active');
+      mainScreen.style.display = 'flex';
+      if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+    });
+
+    // ---- Экран друзей ----
+    const friendsScreen = document.getElementById('screen-friends');
+    const friendsCountEl = document.getElementById('friendsCount');
+    const refLinkEl = document.getElementById('refLink');
+
+    const tgUser = tg?.initDataUnsafe?.user;
+    const myId = tgUser?.id || 'demo';
+    const refLink = `https://t.me/rovx7_bot?start=ref_${myId}`;
+    refLinkEl.textContent = refLink;
+
+    let friendsCount = parseInt(localStorage.getItem('btc_friends') || '0', 10);
+    friendsCountEl.textContent = friendsCount;
+
+    document.getElementById('btnFriends').addEventListener('click', () => {
+      mainScreen.style.display = 'none';
+      friendsScreen.classList.add('active');
+      if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+    });
+
+    document.getElementById('backFriendsBtn').addEventListener('click', () => {
+      friendsScreen.classList.remove('active');
+      mainScreen.style.display = 'flex';
+      if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+    });
+
+    document.getElementById('copyLinkBtn').addEventListener('click', () => {
+      navigator.clipboard?.writeText(refLink);
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+      const btn = document.getElementById('copyLinkBtn');
+      const old = btn.textContent;
+      btn.textContent = 'Скопировано ✓';
+      setTimeout(() => { btn.textContent = old; }, 1500);
+    });
+
+    document.getElementById('shareLinkBtn').addEventListener('click', () => {
+      if (tg?.openTelegramLink) {
+        tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent('Заходи, есть крутая тапалка! 🚀')}`);
+      }
+    });
   </script>
 </body>
 </html>
