@@ -23,7 +23,7 @@ CHANNEL_USERNAME = "rxchanel"
 CHANNEL_LINK = f"https://t.me/{CHANNEL_USERNAME}"
 
 REFERRAL_BONUS = 0.3  # $ за каждого реферала
-MIN_WITHDRAW = 3.0    # минимальная сумма вывода
+MIN_WITHDRAW = 0.3    # минимальная сумма вывода
 
 DB_PATH = "bot_data.db"
 
