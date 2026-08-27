@@ -7,26 +7,52 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    
     body {
       width: 100vw;
       height: 100vh;
-      background: url('bg.jpg') no-repeat center center;
-      background-size: cover;
       display: flex;
       justify-content: center;
       align-items: center;
       font-family: Arial, sans-serif;
       overflow: hidden;
+      margin: 0;
+      padding: 0;
     }
 
-    /* Прозорий контейнер для тумблерів поверх картки з фото */
-    .toggles-container {
+    /* Фонове зображення (генерується програмно) */
+    .background-image {
       position: absolute;
-      top: 31%;
-      left: 36.5%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('data:image/svg+xml;utf8,<svg width="360" height="640" viewBox="0 0 360 640" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><rect width="360" height="640" fill="url(%23paint0_linear_0_1)"/><rect width="360" height="640" fill="url(%23pattern0_0_1)"/><defs><linearGradient id="paint0_linear_0_1" x1="180" y1="0" x2="180" y2="640" gradientUnits="userSpaceOnCreating"><stop stop-color="%236B21A8"/><stop offset="1" stop-color="%231E1B4B"/></linearGradient><pattern id="pattern0_0_1" patternContentUnits="objectBoundingBox" width="1" height="1"><use xlink:href="%23image0_0_1" transform="matrix(0.00078125 0 0 0.00078125 0 0)"/></pattern><image id="image0_0_1" width="1280" height="1280" xlink:href="data:image/png;base64,...(кодоване зображення)..."/></defs></svg>');
+      background-size: cover;
+      background-position: center;
+      z-index: 1;
+    }
+
+    /* Контейнер для тумблерів поверх картки */
+    .toggles-container {
+      position: relative;
+      z-index: 2; /* Щоб бути поверх фону */
+      width: 100%;
+      height: 100%;
+      max-width: 480px; /* Приблизно ширина телефону */
       display: flex;
       flex-direction: column;
-      gap: 13px;
+    }
+
+    /* Прозорий блок, який розміщується поверх фіолетової картки */
+    .toggles-overlay {
+      position: absolute;
+      top: 31%; /* Коригуйте відсотки для точного позиціонування */
+      left: 36.5%;
+      width: 55px; /* Ширина блоку з тумблерами */
+      display: flex;
+      flex-direction: column;
+      gap: 13px; /* Відступ між тумблерами */
     }
 
     /* Стилізація перемикачів */
@@ -67,29 +93,38 @@
     }
 
     input:checked + .slider {
-      background-color: #a855f7;
+      background-color: #a855f7; /* Фіолетовий колір увімкненого стану */
     }
 
     input:checked + .slider:before {
       transform: translateX(24px);
     }
+
   </style>
 </head>
 <body>
 
+  <!-- Фон зі згенерованим зображенням -->
+  <div class="background-image"></div>
+
+  <!-- Контейнер для інтерактивних перемикачів -->
   <div class="toggles-container">
-    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
-    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
-    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
-    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
-    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
-    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
-    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+    <div class="toggles-overlay">
+      <label class="switch"><input type="checkbox" id="monday" checked><span class="slider"></span></label>
+      <label class="switch"><input type="checkbox" id="tuesday" checked><span class="slider"></span></label>
+      <label class="switch"><input type="checkbox" id="wednesday" checked><span class="slider"></span></label>
+      <label class="switch"><input type="checkbox" id="thursday" checked><span class="slider"></span></label>
+      <label class="switch"><input type="checkbox" id="friday" checked><span class="slider"></span></label>
+      <label class="switch"><input type="checkbox" id="saturday" checked><span class="slider"></span></label>
+      <label class="switch"><input type="checkbox" id="sunday" checked><span class="slider"></span></label>
+    </div>
   </div>
 
   <script>
     const tg = window.Telegram.WebApp;
-    tg.expand();
+    tg.expand(); // Розгорнути на весь екран
+
+    // За бажанням: додайте код для збереження стану перемикачів
   </script>
 </body>
 </html>
