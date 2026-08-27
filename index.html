@@ -11,11 +11,13 @@
   :root {
     --bg: #060A18;
     --panel: #131826;
+    --panel-active: #1A2133;
     --line: #232A3D;
     --text: #EDEFF5;
     --muted: #8993AB;
     --accent: #F7931A;
     --accent-2: #FFC773;
+    --green: #5EE6C4;
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
@@ -32,11 +34,6 @@
 
   body {
     height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    padding: 24px 20px 32px;
     position: relative;
   }
 
@@ -61,30 +58,24 @@
     100% { transform: translate(0%, 0%); }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .glow { animation: none; }
-  }
+  @media (prefers-reduced-motion: reduce) { .glow { animation: none; } }
 
-  .top {
+  #mainScreen {
     position: relative;
     z-index: 1;
-    text-align: center;
-    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 20px 28px;
   }
 
-  .greeting {
-    font-size: 15px;
-    color: var(--muted);
-    margin-bottom: 4px;
-  }
-
-  .greeting b {
-    color: var(--text);
-    font-weight: 600;
-  }
-
+  .top { text-align: center; width: 100%; }
+  .greeting { font-size: 15px; color: var(--muted); margin-bottom: 4px; }
+  .greeting b { color: var(--text); font-weight: 600; }
   .balance {
-    font-size: 44px;
+    font-size: 42px;
     font-weight: 800;
     letter-spacing: -0.02em;
     display: flex;
@@ -92,44 +83,36 @@
     justify-content: center;
     gap: 8px;
   }
-
   .balance .coin-sym {
-    font-size: 30px;
+    font-size: 28px;
     background: linear-gradient(135deg, var(--accent), var(--accent-2));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
-
-  .middle {
-    position: relative;
-    z-index: 1;
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
+  .per-tap-hint {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
   }
 
-  .coin-wrap {
-    position: relative;
-    width: 240px;
-    height: 240px;
-  }
+  .middle { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; }
+
+  .coin-wrap { position: relative; width: 220px; height: 220px; }
 
   .coin-btn {
     width: 100%;
     height: 100%;
     border-radius: 50%;
     border: none;
-    background:
-      radial-gradient(circle at 35% 30%, #FFD98A 0%, #F7931A 45%, #C96C0C 100%);
+    background: radial-gradient(circle at 35% 30%, #FFD98A 0%, #F7931A 45%, #C96C0C 100%);
     box-shadow:
       0 0 0 8px rgba(247,147,26,0.08),
       0 0 60px rgba(247,147,26,0.35),
       inset 0 -8px 20px rgba(0,0,0,0.25),
       inset 0 8px 16px rgba(255,255,255,0.25);
-    font-size: 110px;
+    font-size: 100px;
     font-weight: 800;
     color: #7A4300;
     cursor: pointer;
@@ -139,10 +122,7 @@
     transition: transform 0.06s ease;
     padding: 0;
   }
-
-  .coin-btn:active {
-    transform: scale(0.94);
-  }
+  .coin-btn:active { transform: scale(0.94); }
 
   .float {
     position: absolute;
@@ -154,18 +134,12 @@
     left: 50%;
     top: 50%;
   }
-
   @keyframes floatUp {
     0%   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     100% { opacity: 0; transform: translate(-50%, -160%) scale(1.3); }
   }
 
-  .bottom {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    width: 100%;
-  }
+  .bottom { width: 100%; text-align: center; }
 
   .energy-row {
     display: flex;
@@ -174,11 +148,7 @@
     max-width: 280px;
     margin: 0 auto 10px;
   }
-
-  .energy-icon {
-    font-size: 16px;
-  }
-
+  .energy-icon { font-size: 16px; }
   .energy-bar {
     flex: 1;
     height: 10px;
@@ -187,7 +157,6 @@
     border: 1px solid var(--line);
     overflow: hidden;
   }
-
   .energy-fill {
     height: 100%;
     width: 100%;
@@ -195,13 +164,20 @@
     border-radius: 100px;
     transition: width 0.15s ease;
   }
-
   .energy-text {
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
     color: var(--muted);
     min-width: 74px;
     text-align: right;
+  }
+
+  .taps-left {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
   }
 
   .actions-row {
@@ -211,8 +187,8 @@
     max-width: 320px;
     margin: 14px auto 0;
   }
-
   .action-btn {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -226,39 +202,36 @@
     color: var(--text);
     cursor: pointer;
   }
+  .action-btn:active { background: var(--panel-active); transform: scale(0.96); }
+  .action-btn .icon { font-size: 20px; }
+  .action-btn .label { font-size: 9px; color: var(--muted); letter-spacing: 0.02em; }
 
-  .action-btn:active {
-    background: #1A2133;
-    transform: scale(0.96);
-  }
-
-  .action-btn .icon {
-    font-size: 20px;
-  }
-
-  .action-btn .label {
+  .badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 100px;
+    background: var(--green);
+    color: #06301F;
     font-size: 9px;
-    color: var(--muted);
-    letter-spacing: 0.02em;
-  }
-
-  .taps-left {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    color: var(--muted);
-    letter-spacing: 0.06em;
-    margin-bottom: 4px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .footer-line {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-size: 10px;
     color: var(--muted);
     letter-spacing: 0.06em;
-    margin-top: 8px;
+    margin-top: 10px;
   }
 
-  /* ---- Полноэкранные экраны ---- */
+  /* ---- Полноэкранные подэкраны ---- */
   .screen {
     position: fixed;
     inset: 0;
@@ -266,19 +239,19 @@
     z-index: 10;
     display: none;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
+    padding: 24px 20px;
+    overflow-y: auto;
   }
+  .screen.active { display: flex; }
 
-  .screen.active {
+  .screen-header {
     display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
   }
 
   .back-btn {
-    position: absolute;
-    top: 24px;
-    left: 20px;
     display: flex;
     align-items: center;
     gap: 6px;
@@ -290,38 +263,191 @@
     padding: 8px 14px;
     border-radius: 100px;
     cursor: pointer;
+    flex-shrink: 0;
+  }
+  .back-btn:active { background: var(--panel-active); }
+
+  .screen-title { font-size: 19px; font-weight: 700; }
+
+  .screen-balance {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent-2);
+    margin-left: auto;
   }
 
-  .back-btn:active {
-    background: #1A2133;
+  /* ---- Магазин ---- */
+  .shop-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 10px;
   }
+  .shop-icon {
+    font-size: 26px;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--panel-active);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .shop-info { flex: 1; min-width: 0; }
+  .shop-name { font-size: 14px; font-weight: 600; }
+  .shop-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .shop-level {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--green);
+    margin-top: 4px;
+  }
+  .shop-buy {
+    flex-shrink: 0;
+    border: none;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #3A2200;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    min-width: 76px;
+    text-align: center;
+  }
+  .shop-buy:disabled {
+    background: var(--panel-active);
+    color: var(--muted);
+    cursor: default;
+  }
+  .shop-buy:active:not(:disabled) { transform: scale(0.95); }
 
-  .big-glyph {
-    font-size: 80px;
-    line-height: 1;
+  /* ---- Задания ---- */
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .task-icon {
+    font-size: 22px;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--panel-active);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .task-info { flex: 1; min-width: 0; }
+  .task-name { font-size: 14px; font-weight: 600; }
+  .task-reward {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent-2);
+    margin-top: 2px;
+  }
+  .task-btn {
+    flex-shrink: 0;
+    border: none;
+    background: var(--green);
+    color: #06301F;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    min-width: 84px;
+    text-align: center;
+  }
+  .task-btn.secondary {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #3A2200;
+  }
+  .task-btn:disabled {
+    background: var(--panel-active);
+    color: var(--muted);
+    cursor: default;
+  }
+  .task-btn:active:not(:disabled) { transform: scale(0.95); }
+
+  /* ---- Друзья ---- */
+  .friends-stat {
+    display: flex;
+    gap: 10px;
     margin-bottom: 16px;
   }
+  .stat-card {
+    flex: 1;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    border-radius: 16px;
+    padding: 14px;
+    text-align: center;
+  }
+  .stat-num { font-size: 22px; font-weight: 800; }
+  .stat-label { font-size: 10px; color: var(--muted); margin-top: 2px; }
 
-  .big-name {
-    font-size: 24px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
+  .link-box {
+    border: 1px solid var(--line);
+    background: var(--panel);
+    border-radius: 14px;
+    padding: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent-2);
+    word-break: break-all;
+    margin-bottom: 12px;
   }
 
-  .screen-sub {
-    font-size: 14px;
+  .btn-row { display: flex; gap: 10px; }
+  .btn-primary, .btn-secondary {
+    flex: 1;
+    border: none;
+    padding: 13px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #3A2200;
+  }
+  .btn-secondary {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    color: var(--text);
+  }
+  .btn-primary:active, .btn-secondary:active { transform: scale(0.97); }
+
+  .friends-note {
+    font-size: 12px;
     color: var(--muted);
-    margin-top: 8px;
+    margin-top: 16px;
+    line-height: 1.5;
+    text-align: center;
   }
 </style>
 </head>
 <body>
   <div class="glow"></div>
 
-  <div id="mainScreen" style="display:flex; flex-direction:column; align-items:center; justify-content:space-between; width:100%; height:100%; position:relative; z-index:1;">
+  <div id="mainScreen">
     <div class="top">
       <div class="greeting">Привет, <b id="username">друг</b> 👋</div>
       <div class="balance"><span class="coin-sym">₿</span><span id="score">0</span></div>
+      <div class="per-tap-hint" id="perTapHint">+5 за тап</div>
     </div>
 
     <div class="middle">
@@ -346,6 +472,7 @@
         <button class="action-btn" id="btnTasks">
           <span class="icon">📋</span>
           <span class="label">Задания</span>
+          <span class="badge" id="tasksBadge" style="display:none">0</span>
         </button>
         <button class="action-btn" id="btnFriends">
           <span class="icon">👥</span>
@@ -363,10 +490,63 @@
 
   <!-- Экран магазина -->
   <div class="screen" id="screen-shop">
-    <button class="back-btn" id="backShopBtn">← Назад</button>
-    <div class="big-glyph">🛒</div>
-    <div class="big-name">Магазин</div>
-    <p class="screen-sub">Скоро здесь появятся улучшения</p>
+    <div class="screen-header">
+      <button class="back-btn" id="backShopBtn">← Назад</button>
+      <div class="screen-title">Магазин</div>
+      <div class="screen-balance">₿ <span id="shopBalance">0</span></div>
+    </div>
+    <div id="shopList"></div>
+  </div>
+
+  <!-- Экран заданий -->
+  <div class="screen" id="screen-tasks">
+    <div class="screen-header">
+      <button class="back-btn" id="backTasksBtn">← Назад</button>
+      <div class="screen-title">Задания</div>
+      <div class="screen-balance">₿ <span id="tasksBalance">0</span></div>
+    </div>
+    <div id="tasksList"></div>
+  </div>
+
+  <!-- Экран друзей -->
+  <div class="screen" id="screen-friends">
+    <div class="screen-header">
+      <button class="back-btn" id="backFriendsBtn">← Назад</button>
+      <div class="screen-title">Друзья</div>
+    </div>
+
+    <div class="friends-stat">
+      <div class="stat-card">
+        <div class="stat-num" id="friendsCount">0</div>
+        <div class="stat-label">приглашено</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="friendsEarned">0</div>
+        <div class="stat-label">₿ заработано</div>
+      </div>
+    </div>
+
+    <div class="link-box" id="refLink">https://t.me/rovx7_bot?start=ref_...</div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" id="copyLinkBtn">Скопировать</button>
+      <button class="btn-primary" id="shareLinkBtn">Поделиться</button>
+    </div>
+
+    <div class="friends-note">
+      За каждого друга, который откроет бота по твоей ссылке — <b>+4000 ₿</b> на баланс.
+    </div>
+  </div>
+
+  <!-- Экран рейтинга -->
+  <div class="screen" id="screen-rank">
+    <div class="screen-header">
+      <button class="back-btn" id="backRankBtn">← Назад</button>
+      <div class="screen-title">Рейтинг</div>
+    </div>
+    <div class="friends-note" style="margin-top: 40px;">
+      Рейтинг игроков скоро появится здесь 🏆
+    </div>
   </div>
 
   <script>
@@ -375,36 +555,62 @@
       tg.ready();
       tg.expand();
       const user = tg.initDataUnsafe?.user;
-      if (user?.first_name) {
-        document.getElementById('username').textContent = user.first_name;
-      }
+      if (user?.first_name) document.getElementById('username').textContent = user.first_name;
     }
 
+    // ---------- Состояние ----------
+    const state = {
+      score: parseInt(localStorage.getItem('btc_taps') || '0', 10),
+      energy: parseInt(localStorage.getItem('btc_energy') || '5000', 10),
+      maxEnergy: parseInt(localStorage.getItem('btc_max_energy') || '5000', 10),
+      tapPower: parseInt(localStorage.getItem('btc_tap_power') || '5', 10),
+      regenPerSec: parseInt(localStorage.getItem('btc_regen') || '1', 10),
+      friendsCount: parseInt(localStorage.getItem('btc_friends') || '0', 10),
+      friendsEarned: parseInt(localStorage.getItem('btc_friends_earned') || '0', 10),
+      tasksClaimed: JSON.parse(localStorage.getItem('btc_tasks_claimed') || '{}'),
+      shopLevels: JSON.parse(localStorage.getItem('btc_shop_levels') || '{}'),
+    };
+
+    function save() {
+      localStorage.setItem('btc_taps', state.score);
+      localStorage.setItem('btc_energy', state.energy);
+      localStorage.setItem('btc_max_energy', state.maxEnergy);
+      localStorage.setItem('btc_tap_power', state.tapPower);
+      localStorage.setItem('btc_regen', state.regenPerSec);
+      localStorage.setItem('btc_friends', state.friendsCount);
+      localStorage.setItem('btc_friends_earned', state.friendsEarned);
+      localStorage.setItem('btc_tasks_claimed', JSON.stringify(state.tasksClaimed));
+      localStorage.setItem('btc_shop_levels', JSON.stringify(state.shopLevels));
+    }
+
+    function fmt(n) { return Math.floor(n).toLocaleString('en-US'); }
+
+    // ---------- Верхний баланс ----------
     const scoreEl = document.getElementById('score');
-    const coinBtn = document.getElementById('coinBtn');
-    const coinWrap = document.getElementById('coinWrap');
+    const perTapHint = document.getElementById('perTapHint');
+    function renderBalance() {
+      scoreEl.textContent = fmt(state.score);
+      document.getElementById('shopBalance').textContent = fmt(state.score);
+      document.getElementById('tasksBalance').textContent = fmt(state.score);
+      perTapHint.textContent = `+${state.tapPower} за тап`;
+    }
+
+    // ---------- Энергия ----------
     const energyFill = document.getElementById('energyFill');
     const energyText = document.getElementById('energyText');
     const tapHint = document.getElementById('tapHint');
-
-    const MAX_ENERGY = 5000;
-    const REGEN_PER_SEC = 1; // сколько энергии восстанавливается в секунду
-
-    let score = parseInt(localStorage.getItem('btc_taps') || '0', 10);
-    let energy = parseInt(localStorage.getItem('btc_energy') || String(MAX_ENERGY), 10);
-
-    scoreEl.textContent = score.toLocaleString('en-US');
-
-    function updateEnergyUI() {
-      const pct = Math.max(0, Math.min(100, (energy / MAX_ENERGY) * 100));
+    function renderEnergy() {
+      const pct = Math.max(0, Math.min(100, (state.energy / state.maxEnergy) * 100));
       energyFill.style.width = pct + '%';
-      energyText.textContent = `${energy}/${MAX_ENERGY}`;
-      tapHint.textContent = energy > 0
+      energyText.textContent = `${Math.floor(state.energy)}/${state.maxEnergy}`;
+      tapHint.textContent = state.energy > 0
         ? 'Нажимай на монету, чтобы зарабатывать'
         : 'Энергия закончилась — теперь +1 за тап';
     }
-    updateEnergyUI();
 
+    // ---------- Тап ----------
+    const coinBtn = document.getElementById('coinBtn');
+    const coinWrap = document.getElementById('coinWrap');
     function spawnFloat(x, y, amount) {
       const f = document.createElement('div');
       f.className = 'float';
@@ -414,79 +620,277 @@
       coinWrap.appendChild(f);
       setTimeout(() => f.remove(), 700);
     }
-
     coinBtn.addEventListener('click', (e) => {
       let gain;
-      if (energy >= 5) {
-        gain = 5;
-        energy -= 5;
+      if (state.energy >= state.tapPower) {
+        gain = state.tapPower;
+        state.energy -= state.tapPower;
       } else {
         gain = 1;
       }
-
-      score += gain;
-      scoreEl.textContent = score.toLocaleString('en-US');
-      localStorage.setItem('btc_taps', score);
-      localStorage.setItem('btc_energy', energy);
-      updateEnergyUI();
+      state.score += gain;
+      renderBalance();
+      renderEnergy();
+      save();
 
       const rect = coinWrap.getBoundingClientRect();
       const x = (e.clientX || rect.width / 2) - rect.left;
       const y = (e.clientY || rect.height / 2) - rect.top;
       spawnFloat(x, y, gain);
-
       if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
     });
 
-    // Медленная регенерация энергии со временем
     setInterval(() => {
-      if (energy < MAX_ENERGY) {
-        energy = Math.min(MAX_ENERGY, energy + REGEN_PER_SEC);
-        localStorage.setItem('btc_energy', energy);
-        updateEnergyUI();
+      if (state.energy < state.maxEnergy) {
+        state.energy = Math.min(state.maxEnergy, state.energy + state.regenPerSec);
+        renderEnergy();
+        save();
       }
     }, 1000);
 
-    // ---- Переход в магазин ----
+    // ---------- Навигация между экранами ----------
     const mainScreen = document.getElementById('mainScreen');
-    const shopScreen = document.getElementById('screen-shop');
-
-    document.getElementById('btnShop').addEventListener('click', () => {
+    function goTo(screenEl) {
       mainScreen.style.display = 'none';
-      shopScreen.classList.add('active');
+      screenEl.classList.add('active');
       if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-    });
-
-    document.getElementById('backShopBtn').addEventListener('click', () => {
-      shopScreen.classList.remove('active');
+    }
+    function goBack(screenEl) {
+      screenEl.classList.remove('active');
       mainScreen.style.display = 'flex';
       if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+    }
+
+    const shopScreen = document.getElementById('screen-shop');
+    const tasksScreen = document.getElementById('screen-tasks');
+    const friendsScreen = document.getElementById('screen-friends');
+    const rankScreen = document.getElementById('screen-rank');
+
+    document.getElementById('btnShop').addEventListener('click', () => { renderShop(); goTo(shopScreen); });
+    document.getElementById('backShopBtn').addEventListener('click', () => goBack(shopScreen));
+
+    document.getElementById('btnTasks').addEventListener('click', () => { renderTasks(); goTo(tasksScreen); });
+    document.getElementById('backTasksBtn').addEventListener('click', () => goBack(tasksScreen));
+
+    document.getElementById('btnFriends').addEventListener('click', () => { renderFriends(); goTo(friendsScreen); });
+    document.getElementById('backFriendsBtn').addEventListener('click', () => goBack(friendsScreen));
+
+    document.getElementById('btnRank').addEventListener('click', () => goTo(rankScreen));
+    document.getElementById('backRankBtn').addEventListener('click', () => goBack(rankScreen));
+
+    // ---------- Магазин ----------
+    const SHOP_ITEMS = [
+      {
+        id: 'tap_power',
+        icon: '👆',
+        name: 'Сила тапа',
+        desc: 'Больше монет за один тап',
+        baseCost: 10000,
+        costMult: 1.8,
+        effect: () => { state.tapPower += 5; },
+        maxLevel: 10,
+      },
+      {
+        id: 'max_energy',
+        icon: '🔋',
+        name: 'Ёмкость энергии',
+        desc: 'Увеличивает максимум энергии',
+        baseCost: 15000,
+        costMult: 1.8,
+        effect: () => { state.maxEnergy += 1000; },
+        maxLevel: 10,
+      },
+      {
+        id: 'regen',
+        icon: '⚡',
+        name: 'Восстановление',
+        desc: 'Энергия восстанавливается быстрее',
+        baseCost: 20000,
+        costMult: 2.0,
+        effect: () => { state.regenPerSec += 1; },
+        maxLevel: 8,
+      },
+    ];
+
+    function itemLevel(id) { return state.shopLevels[id] || 0; }
+    function itemCost(item) {
+      const lvl = itemLevel(item.id);
+      return Math.floor(item.baseCost * Math.pow(item.costMult, lvl));
+    }
+
+    function renderShop() {
+      renderBalance();
+      const list = document.getElementById('shopList');
+      list.innerHTML = '';
+      SHOP_ITEMS.forEach(item => {
+        const lvl = itemLevel(item.id);
+        const maxed = lvl >= item.maxLevel;
+        const cost = itemCost(item);
+        const canBuy = !maxed && state.score >= cost;
+
+        const el = document.createElement('div');
+        el.className = 'shop-item';
+        el.innerHTML = `
+          <div class="shop-icon">${item.icon}</div>
+          <div class="shop-info">
+            <div class="shop-name">${item.name}</div>
+            <div class="shop-desc">${item.desc}</div>
+            <div class="shop-level">Уровень ${lvl}/${item.maxLevel}</div>
+          </div>
+          <button class="shop-buy" ${canBuy ? '' : 'disabled'}>
+            ${maxed ? 'Макс.' : fmt(cost) + ' ₿'}
+          </button>
+        `;
+        const btn = el.querySelector('.shop-buy');
+        btn.addEventListener('click', () => {
+          if (maxed || state.score < cost) return;
+          state.score -= cost;
+          state.shopLevels[item.id] = lvl + 1;
+          item.effect();
+          save();
+          renderShop();
+          renderBalance();
+          renderEnergy();
+          if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        });
+        list.appendChild(el);
+      });
+    }
+
+    // ---------- Задания ----------
+    const TASKS = [
+      {
+        id: 'subscribe_channel',
+        icon: '📢',
+        name: 'Подписаться на канал',
+        reward: 5000,
+        type: 'link',
+        url: 'https://t.me/rxchanel',
+      },
+      {
+        id: 'tap_100',
+        icon: '👆',
+        name: 'Сделать 100 тапов',
+        reward: 2000,
+        type: 'auto',
+        check: () => state.score >= 0 && getTotalTaps() >= 100,
+      },
+      {
+        id: 'invite_1_friend',
+        icon: '👥',
+        name: 'Пригласить 1 друга',
+        reward: 4000,
+        type: 'auto',
+        check: () => state.friendsCount >= 1,
+      },
+      {
+        id: 'buy_upgrade',
+        icon: '🛒',
+        name: 'Купить любое улучшение',
+        reward: 3000,
+        type: 'auto',
+        check: () => Object.keys(state.shopLevels).length > 0,
+      },
+    ];
+
+    function getTotalTaps() {
+      return parseInt(localStorage.getItem('btc_total_taps_count') || '0', 10);
+    }
+
+    function renderTasks() {
+      renderBalance();
+      const list = document.getElementById('tasksList');
+      list.innerHTML = '';
+      let readyCount = 0;
+
+      TASKS.forEach(task => {
+        const claimed = !!state.tasksClaimed[task.id];
+        let ready = false;
+        if (!claimed) {
+          if (task.type === 'auto') ready = task.check();
+          if (task.type === 'link') ready = true; // доступно сразу, засчитываем по клику "Выполнено"
+        }
+        if (ready && !claimed) readyCount++;
+
+        const el = document.createElement('div');
+        el.className = 'task-item';
+
+        let btnHtml;
+        if (claimed) {
+          btnHtml = `<button class="task-btn" disabled>Готово ✓</button>`;
+        } else if (task.type === 'link') {
+          btnHtml = `<button class="task-btn secondary" data-action="open">Открыть</button>`;
+        } else {
+          btnHtml = `<button class="task-btn" ${ready ? '' : 'disabled'} data-action="claim">${ready ? 'Забрать' : 'В процессе'}</button>`;
+        }
+
+        el.innerHTML = `
+          <div class="task-icon">${task.icon}</div>
+          <div class="task-info">
+            <div class="task-name">${task.name}</div>
+            <div class="task-reward">+${fmt(task.reward)} ₿</div>
+          </div>
+          ${btnHtml}
+        `;
+
+        const btn = el.querySelector('.task-btn');
+        if (btn && !claimed) {
+          btn.addEventListener('click', () => {
+            if (task.type === 'link' && btn.dataset.action === 'open') {
+              tg?.openTelegramLink ? tg.openTelegramLink(task.url) : window.open(task.url, '_blank');
+              btn.textContent = 'Забрать';
+              btn.dataset.action = 'claim';
+              btn.classList.remove('secondary');
+              btn.onclick = () => {
+                state.tasksClaimed[task.id] = true;
+                state.score += task.reward;
+                save();
+                renderTasks();
+                renderBalance();
+                if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+              };
+              return;
+            }
+            if (ready) {
+              state.tasksClaimed[task.id] = true;
+              state.score += task.reward;
+              save();
+              renderTasks();
+              renderBalance();
+              if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            }
+          });
+        }
+
+        list.appendChild(el);
+      });
+
+      const badge = document.getElementById('tasksBadge');
+      if (readyCount > 0) {
+        badge.style.display = 'flex';
+        badge.textContent = readyCount;
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    // считаем реальное количество тапов отдельно (для задания "100 тапов")
+    const realCoinBtn = document.getElementById('coinBtn');
+    realCoinBtn.addEventListener('click', () => {
+      const total = getTotalTaps() + 1;
+      localStorage.setItem('btc_total_taps_count', total);
     });
 
-    // ---- Экран друзей ----
-    const friendsScreen = document.getElementById('screen-friends');
-    const friendsCountEl = document.getElementById('friendsCount');
-    const refLinkEl = document.getElementById('refLink');
-
+    // ---------- Друзья ----------
     const tgUser = tg?.initDataUnsafe?.user;
     const myId = tgUser?.id || 'demo';
     const refLink = `https://t.me/rovx7_bot?start=ref_${myId}`;
-    refLinkEl.textContent = refLink;
 
-    let friendsCount = parseInt(localStorage.getItem('btc_friends') || '0', 10);
-    friendsCountEl.textContent = friendsCount;
-
-    document.getElementById('btnFriends').addEventListener('click', () => {
-      mainScreen.style.display = 'none';
-      friendsScreen.classList.add('active');
-      if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-    });
-
-    document.getElementById('backFriendsBtn').addEventListener('click', () => {
-      friendsScreen.classList.remove('active');
-      mainScreen.style.display = 'flex';
-      if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-    });
+    function renderFriends() {
+      document.getElementById('friendsCount').textContent = state.friendsCount;
+      document.getElementById('friendsEarned').textContent = fmt(state.friendsEarned);
+      document.getElementById('refLink').textContent = refLink;
+    }
 
     document.getElementById('copyLinkBtn').addEventListener('click', () => {
       navigator.clipboard?.writeText(refLink);
@@ -498,10 +902,14 @@
     });
 
     document.getElementById('shareLinkBtn').addEventListener('click', () => {
-      if (tg?.openTelegramLink) {
-        tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent('Заходи, есть крутая тапалка! 🚀')}`);
-      }
+      const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent('Заходи, есть крутая тапалка! 🚀')}`;
+      if (tg?.openTelegramLink) tg.openTelegramLink(shareUrl);
+      else window.open(shareUrl, '_blank');
     });
+
+    // ---------- Стартовая отрисовка ----------
+    renderBalance();
+    renderEnergy();
   </script>
 </body>
 </html>
