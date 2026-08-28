@@ -1,166 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<title>Honey · HNY</title>
-<link rel="stylesheet" href="style.css" />
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пасіка Mini App</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <div class="bg-field">
-    <div class="bg-glow bg-glow--a"></div>
-    <div class="bg-glow bg-glow--b"></div>
-    <div class="bg-grid"></div>
-  </div>
-
-  <!-- ============ HOME ============ -->
-  <main class="screen screen--active" id="screen-home">
-
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-mark">🍯</div>
-        <div class="brand-text">
-          <span class="brand-name">HONEY</span>
-          <span class="brand-ticker">HNY</span>
+    <div id="app-container">
+        <!-- Фон (соняшники) -->
+        <div class="sunflower-field"></div>
+        
+        <!-- Лавандове поле та Ведмідь (анімовані окремо) -->
+        <div class="lavender-field-container">
+            <div class="lavender-field"></div>
+            <div class="bear-layer">
+                <img src="https://em-content.zobj.net/source/noto-emoji-animations/344/bear_1f43b.gif" alt="Ведмідь" class="bear-head">
+            </div>
         </div>
-      </div>
-      <button class="avatar-btn" id="avatarBtn" aria-label="Profile">
-        <span id="avatarInitial">H</span>
-      </button>
-    </header>
+        
+        <!-- Вулик (на землі) -->
+        <div class="beehive-container">
+            <img src="https://i.imgur.com/K1RkM1v.png" alt="Вулик" class="beehive-sprite">
+            <div class="honey-jars"></div>
+        </div>
 
-    <section class="balance-block">
-      <div class="balance-value">
-        <span id="balanceNumber">128.4</span>
-        <span class="balance-unit">HNY</span>
-      </div>
-      <div class="balance-usd">≈ $<span id="balanceUsd">0.00</span></div>
-    </section>
+        <!-- Квіти на передньому плані (мак і конюшина) -->
+        <div class="foreground-flowers">
+            <img src="https://i.imgur.com/P0Y1q6F.png" alt="Мак" class="poppy poppy-1">
+            <img src="https://i.imgur.com/P0Y1q6F.png" alt="Мак" class="poppy poppy-2">
+            <img src="https://i.imgur.com/zW87J7g.png" alt="Конюшина" class="clover clover-1">
+        </div>
+        
+        <!-- Шари з бджолами (анімовані JavaScript) -->
+        <div class="bee-layer bee-1">
+            <img src="https://em-content.zobj.net/source/noto-emoji-animations/344/honeybee_1f41d.gif" alt="Бджола" class="bee">
+        </div>
+        <div class="bee-layer bee-2">
+            <img src="https://em-content.zobj.net/source/noto-emoji-animations/344/honeybee_1f41d.gif" alt="Бджола" class="bee">
+        </div>
+        <div class="bee-layer bee-3">
+            <img src="https://em-content.zobj.net/source/noto-emoji-animations/344/honeybee_1f41d.gif" alt="Бджола" class="bee">
+        </div>
 
-    <section class="hive-stage" id="hiveStage">
-      <div class="hive">
-        <div class="hive-ring hive-ring--1"></div>
-        <div class="hive-ring hive-ring--2"></div>
-        <div class="hive-ring hive-ring--3"></div>
-        <div class="hive-entrance" id="hiveEntrance"></div>
-        <div class="hive-glow"></div>
-      </div>
-
-      <div class="bee" id="bee">
-        <div class="bee-wing bee-wing--l"></div>
-        <div class="bee-wing bee-wing--r"></div>
-        <div class="bee-body"></div>
-      </div>
-
-      <div class="float-layer" id="floatLayer"></div>
-    </section>
-
-    <section class="energy-block">
-      <div class="energy-label">
-        <span>🍯 Hive status</span>
-        <span id="hiveStatusText">Bee is out foraging…</span>
-      </div>
-      <div class="energy-bar">
-        <div class="energy-bar-fill" id="energyBarFill"></div>
-      </div>
-    </section>
-
-    <button class="boost-btn" id="boostBtn">
-      <span class="boost-top">🍯 BOOST</span>
-      <span class="boost-sub" id="boostSub">2x honey</span>
-    </button>
-
-  </main>
-
-  <!-- ============ EARN ============ -->
-  <section class="screen" id="screen-earn">
-    <header class="subheader">
-      <h1>Earn</h1>
-      <p>Complete tasks to earn extra HNY</p>
-    </header>
-    <div class="task-list" id="taskList"></div>
-  </section>
-
-  <!-- ============ FRIENDS ============ -->
-  <section class="screen" id="screen-friends">
-    <header class="subheader">
-      <h1>Friends</h1>
-      <p>Invite friends, grow together</p>
-    </header>
-
-    <div class="stat-pair">
-      <div class="stat-box">
-        <span class="stat-box-num" id="friendsCountNum">0</span>
-        <span class="stat-box-label">invited</span>
-      </div>
-      <div class="stat-box">
-        <span class="stat-box-num" id="friendsEarnedNum">0</span>
-        <span class="stat-box-label">HNY earned</span>
-      </div>
     </div>
-
-    <div class="ref-link-box" id="refLinkBox">https://t.me/…</div>
-
-    <div class="ref-btn-row">
-      <button class="ref-btn ref-btn--ghost" id="copyRefBtn">Copy</button>
-      <button class="ref-btn ref-btn--solid" id="shareRefBtn">Share</button>
-    </div>
-
-    <p class="ref-note">Earn <b>30 HNY</b> for every friend who opens Honey through your link.</p>
-  </section>
-
-  <!-- ============ WALLET ============ -->
-  <section class="screen" id="screen-wallet">
-    <header class="subheader">
-      <h1>Wallet</h1>
-      <p>Your HNY balance</p>
-    </header>
-
-    <div class="wallet-total">
-      <span class="wallet-total-label">Total balance</span>
-      <span class="wallet-total-value"><span id="walletBalance">0</span> HNY</span>
-    </div>
-
-    <div class="wallet-breakdown">
-      <div class="wallet-row">
-        <span>Earned from harvest</span>
-        <span id="walletFromHarvest">0</span>
-      </div>
-      <div class="wallet-row">
-        <span>Earned from tasks</span>
-        <span id="walletFromTasks">0</span>
-      </div>
-      <div class="wallet-row">
-        <span>Earned from friends</span>
-        <span id="walletFromFriends">0</span>
-      </div>
-    </div>
-
-    <button class="wallet-connect-btn" disabled>Connect wallet — coming soon</button>
-  </section>
-
-  <!-- ============ BOTTOM NAV ============ -->
-  <nav class="bottom-nav">
-    <button class="nav-item nav-item--active" data-screen="home">
-      <span class="nav-icon">⌂</span>
-      <span class="nav-label">Home</span>
-    </button>
-    <button class="nav-item" data-screen="earn">
-      <span class="nav-icon">✦</span>
-      <span class="nav-label">Earn</span>
-    </button>
-    <button class="nav-item" data-screen="friends">
-      <span class="nav-icon">◎</span>
-      <span class="nav-label">Friends</span>
-    </button>
-    <button class="nav-item" data-screen="wallet">
-      <span class="nav-icon">◈</span>
-      <span class="nav-label">Wallet</span>
-    </button>
-  </nav>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
