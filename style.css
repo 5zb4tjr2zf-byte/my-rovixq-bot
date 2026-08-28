@@ -8,6 +8,7 @@ body, html {
     width: 100%;
     height: 100%;
     overflow: hidden;
+    background-color: #87ceeb;
 }
 
 #app-container {
@@ -16,28 +17,22 @@ body, html {
     height: 100vh;
 }
 
-/* Фонові кольори та елементи пейзажу */
-.main-bg {
+/* Натягуємо векторну сцену на весь екран */
+.main-bg-svg {
     width: 100%;
     height: 100%;
-    background: linear-gradient(to bottom, 
-        #87ceeb 0%, 
-        #e0f6ff 35%, 
-        #ffd700 40%, 
-        #9370db 60%, 
-        #4ee44e 80%, 
-        #2e8b57 100%);
+    display: block;
 }
 
-/* Стилі для бджілок */
+/* Анімація бджілок */
 .bee-layer {
     position: absolute;
-    font-size: 32px;
+    font-size: 34px;
     z-index: 10;
     pointer-events: none;
-    filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.2));
+    filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3));
 }
 
-.bee-1 { top: 50%; left: 20%; }
-.bee-2 { top: 40%; right: 25%; }
-.bee-3 { top: 65%; left: 60%; }
+.bee-1 { top: 45%; left: 25%; }
+.bee-2 { top: 35%; right: 20%; }
+.bee-3 { top: 60%; left: 55%; }
