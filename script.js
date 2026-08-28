@@ -95,12 +95,17 @@ function renderBoost() {
 }
 
 // ==================== Bee flight cycle ====================
-function spawnFloatingPlus(amount) {
+function spawnFloatingPlus(amount, x, y) {
   const el = document.createElement('div');
   el.className = 'float-plus';
   el.textContent = '+' + amount.toFixed(1);
-  el.style.left = '50%';
-  el.style.top = '58%';
+  if (x != null && y != null) {
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+  } else {
+    el.style.left = '50%';
+    el.style.top = '58%';
+  }
   floatLayer.appendChild(el);
   setTimeout(() => el.remove(), 800);
 }
@@ -144,8 +149,12 @@ function beeCycle() {
 
   const w = stageWidth();
   const h = stageHeight();
-  const hiveX = w / 2;
-  const hiveY = h / 2 + 55; // roughly at entrance height of the wooden cabin
+
+  // Target the real entrance hotspot positioned over the hive photo
+  const stageRect = hiveStage.getBoundingClientRect();
+  const entRect = hiveEntrance.getBoundingClientRect();
+  const hiveX = entRect.left + entRect.width / 2 - stageRect.left;
+  const hiveY = entRect.top + entRect.height / 2 - stageRect.top;
 
   const startSide = Math.random() < 0.5 ? -1 : 1;
   const startPoint = {
@@ -185,7 +194,7 @@ function beeCycle() {
           state.totalHarvests += 1;
           saveState();
           renderBalance();
-          spawnFloatingPlus(finalGain);
+          spawnFloatingPlus(finalGain, hiveX, hiveY);
           hapticNotify('success');
 
           renderHiveBar(0.75);
@@ -441,3 +450,21 @@ renderBalance();
 renderBoost();
 renderTasks();
 beeCycle();
+
+// ==================== Ambient pollen specks ====================
+const pollenLayer = document.getElementById('pollenLayer');
+
+function spawnPollen() {
+  if (!pollenLayer) return;
+  const speck = document.createElement('div');
+  speck.className = 'pollen-speck';
+  speck.style.left = (10 + Math.random() * 80) + '%';
+  speck.style.bottom = (5 + Math.random() * 15) + '%';
+  const duration = 6 + Math.random() * 5;
+  speck.style.animationDuration = duration + 's';
+  pollenLayer.appendChild(speck);
+  setTimeout(() => speck.remove(), duration * 1000);
+}
+
+setInterval(spawnPollen, 1400);
+spawnPollen();
