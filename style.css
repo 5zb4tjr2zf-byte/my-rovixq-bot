@@ -1,148 +1,39 @@
-body, html {
+* {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: linear-gradient(to bottom, #87CEEB, #FFF); /* Небо */
 }
 
 #app-container {
     position: relative;
     width: 100vw;
     height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end; /* Все на землю */
 }
 
-/* Фон соняшників */
-.sunflower-field {
-    position: absolute;
-    top: 30%;
-    left: 0;
-    width: 100%;
-    height: 35%;
-    background-image: url('https://i.imgur.com/s6Z8918.png'); /* Соняшники та дорога */
-    background-size: cover;
-    background-position: center bottom;
-    z-index: 1;
-}
-
-/* Контейнер лавандового поля */
-.lavender-field-container {
-    position: absolute;
-    top: 55%;
-    left: 0;
-    width: 100%;
-    height: 30%;
-    z-index: 2;
-}
-
-.lavender-field {
+/* Встановлюємо твою оригінальну картинку як фон */
+.main-bg {
     width: 100%;
     height: 100%;
-    background-image: url('https://i.imgur.com/C5M1G9r.png'); /* Лавандове поле */
+    background-image: url('https://i.ibb.co/3sZq1y0/honey-bg.jpg'); /* Або завантаж своє фото в репозиторій як bg.jpg і вкажи url('bg.jpg') */
     background-size: cover;
     background-position: center;
 }
 
-/* Ведмідь (анімований CSS-маятник) */
-.bear-layer {
-    position: absolute;
-    top: -50px; /* Приховати за полем */
-    right: 15%;
-    width: 80px;
-    animation: bearPeek 10s infinite ease-in-out;
-}
-
-.bear-head {
-    width: 100%;
-}
-
-@keyframes bearPeek {
-    0%, 100% { transform: translateY(0); }
-    5%, 15% { transform: translateY(-30px); } /* Визирнув */
-    20% { transform: translateY(0); } /* Заховався */
-}
-
-/* Контейнер вулика */
-.beehive-container {
-    position: relative;
-    width: 100%;
-    height: 40%;
-    z-index: 3;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    padding-bottom: 5vh;
-}
-
-.beehive-sprite {
-    height: 80%; /* Відносно контейнера */
-    position: relative;
-}
-
-/* Банки меду */
-.honey-jars {
-    position: absolute;
-    bottom: -15px;
-    right: 25%;
-    width: 40px;
-    height: 40px;
-    background-image: url('https://i.imgur.com/qE4Jm1K.png'); /* Сцена з банками */
-    background-size: contain;
-    background-repeat: no-repeat;
-}
-
-/* Квіти на передньому плані */
-.foreground-flowers {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 25%;
-    background: linear-gradient(to top, rgba(0,0,0,0.1), rgba(0,0,0,0)); /* Тінь */
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-end;
-    z-index: 4;
-    pointer-events: none;
-}
-
-.poppy, .clover {
-    height: 70px;
-}
-
-/* Анімація колихання квітів (CSS) */
-.poppy-1, .clover-1 {
-    animation: flowerSway 5s infinite ease-in-out;
-}
-.poppy-2 {
-    animation: flowerSway 7s infinite ease-in-out;
-    animation-delay: 1s;
-}
-
-@keyframes flowerSway {
-    0%, 100% { transform: rotate(-3deg); }
-    50% { transform: rotate(3deg); }
-}
-
-/* Шари з бджолами */
+/* Стилі для бджілок */
 .bee-layer {
     position: absolute;
-    width: 50px;
-    height: 50px;
+    font-size: 32px;
     z-index: 10;
     pointer-events: none;
+    filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.2));
 }
 
-.bee {
-    width: 100%;
-}
-
-/* Початкові позиції бджіл */
-.bee-1 { top: 60%; left: 10%; }
-.bee-2 { top: 50%; right: 20%; }
-.bee-3 { top: 40%; left: 60%; }
+.bee-1 { top: 50%; left: 20%; }
+.bee-2 { top: 40%; right: 25%; }
+.bee-3 { top: 65%; left: 60%; }
