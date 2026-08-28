@@ -16,13 +16,17 @@ body, html {
     height: 100vh;
 }
 
-/* Встановлюємо твою оригінальну картинку як фон */
+/* Фонові кольори та елементи пейзажу */
 .main-bg {
     width: 100%;
     height: 100%;
-    background-image: url('https://i.ibb.co/3sZq1y0/honey-bg.jpg'); /* Або завантаж своє фото в репозиторій як bg.jpg і вкажи url('bg.jpg') */
-    background-size: cover;
-    background-position: center;
+    background: linear-gradient(to bottom, 
+        #87ceeb 0%, 
+        #e0f6ff 35%, 
+        #ffd700 40%, 
+        #9370db 60%, 
+        #4ee44e 80%, 
+        #2e8b57 100%);
 }
 
 /* Стилі для бджілок */
