@@ -1,21 +1,184 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Honey App</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<title>Honey · HNY</title>
+<link rel="stylesheet" href="style.css" />
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <div id="app-container">
-        <!-- Твоє зображення пасіки -->
-        <img src="https://i.postimg.cc/GhrHR1CC/IMG-7730.jpg" class="main-bg-img" alt="Пасіка">
 
-        <!-- Анімовані бджілки поверх фото -->
-        <div class="bee-layer bee-1">🐝</div>
-        <div class="bee-layer bee-2">🐝</div>
-        <div class="bee-layer bee-3">🐝</div>
+  <div class="bg-field">
+    <div class="sky">
+      <div class="sun-glow"></div>
+      <div class="cloud cloud--a"></div>
+      <div class="cloud cloud--b"></div>
     </div>
-    <script src="script.js"></script>
+    <div class="meadow"></div>
+  </div>
+
+  <!-- ============ HOME ============ -->
+  <main class="screen screen--active" id="screen-home">
+
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">🍯</div>
+        <div class="brand-text">
+          <span class="brand-name">HONEY</span>
+          <span class="brand-ticker">HNY</span>
+        </div>
+      </div>
+      <button class="avatar-btn" id="avatarBtn" aria-label="Profile">
+        <span id="avatarInitial">H</span>
+      </button>
+    </header>
+
+    <section class="balance-block">
+      <div class="balance-value">
+        <span id="balanceNumber">128.4</span>
+        <span class="balance-unit">HNY</span>
+      </div>
+      <div class="balance-usd">≈ $<span id="balanceUsd">0.00</span></div>
+    </section>
+
+    <section class="hive-stage" id="hiveStage">
+      <div class="hive">
+        <div class="hive-roof"></div>
+        <div class="hive-roof-beam"></div>
+        <div class="hive-body">
+          <div class="hive-plank"></div>
+          <div class="hive-plank"></div>
+          <div class="hive-window"></div>
+          <div class="hive-entrance" id="hiveEntrance"></div>
+        </div>
+        <div class="hive-legs">
+          <div class="hive-leg hive-leg--l"></div>
+          <div class="hive-leg hive-leg--r"></div>
+        </div>
+        <div class="hive-ladder">
+          <div class="ladder-rail ladder-rail--l"></div>
+          <div class="ladder-rail ladder-rail--r"></div>
+          <div class="ladder-rung"></div>
+          <div class="ladder-rung"></div>
+          <div class="ladder-rung"></div>
+        </div>
+        <div class="hive-glow"></div>
+      </div>
+
+      <div class="bee" id="bee">
+        <div class="bee-wing bee-wing--l"></div>
+        <div class="bee-wing bee-wing--r"></div>
+        <div class="bee-body"></div>
+      </div>
+
+      <div class="float-layer" id="floatLayer"></div>
+    </section>
+
+    <section class="energy-block">
+      <div class="energy-label">
+        <span>🍯 Hive status</span>
+        <span id="hiveStatusText">Пчела летает в поисках нектара…</span>
+      </div>
+      <div class="energy-bar">
+        <div class="energy-bar-fill" id="energyBarFill"></div>
+      </div>
+    </section>
+
+    <button class="boost-btn" id="boostBtn">
+      <span class="boost-top">🍯 BOOST</span>
+      <span class="boost-sub" id="boostSub">Мёд x2</span>
+    </button>
+
+  </main>
+
+  <!-- ============ EARN ============ -->
+  <section class="screen" id="screen-earn">
+    <header class="subheader">
+      <h1>Заработок</h1>
+      <p>Выполняй задания и получай HNY</p>
+    </header>
+    <div class="task-list" id="taskList"></div>
+  </section>
+
+  <!-- ============ FRIENDS ============ -->
+  <section class="screen" id="screen-friends">
+    <header class="subheader">
+      <h1>Друзья</h1>
+      <p>Приглашай друзей и растите вместе</p>
+    </header>
+
+    <div class="stat-pair">
+      <div class="stat-box">
+        <span class="stat-box-num" id="friendsCountNum">0</span>
+        <span class="stat-box-label">invited</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-box-num" id="friendsEarnedNum">0</span>
+        <span class="stat-box-label">HNY earned</span>
+      </div>
+    </div>
+
+    <div class="ref-link-box" id="refLinkBox">https://t.me/…</div>
+
+    <div class="ref-btn-row">
+      <button class="ref-btn ref-btn--ghost" id="copyRefBtn">Скопировать</button>
+      <button class="ref-btn ref-btn--solid" id="shareRefBtn">Поделиться</button>
+    </div>
+
+    <p class="ref-note">Получай <b>30 HNY</b> за каждого друга, который откроет Honey по твоей ссылке.</p>
+  </section>
+
+  <!-- ============ WALLET ============ -->
+  <section class="screen" id="screen-wallet">
+    <header class="subheader">
+      <h1>Кошелёк</h1>
+      <p>Твой баланс HNY</p>
+    </header>
+
+    <div class="wallet-total">
+      <span class="wallet-total-label">Общий баланс</span>
+      <span class="wallet-total-value"><span id="walletBalance">0</span> HNY</span>
+    </div>
+
+    <div class="wallet-breakdown">
+      <div class="wallet-row">
+        <span>Заработано на пасеке</span>
+        <span id="walletFromHarvest">0</span>
+      </div>
+      <div class="wallet-row">
+        <span>Заработано за задания</span>
+        <span id="walletFromTasks">0</span>
+      </div>
+      <div class="wallet-row">
+        <span>Заработано от друзей</span>
+        <span id="walletFromFriends">0</span>
+      </div>
+    </div>
+
+    <button class="wallet-connect-btn" disabled>Подключить кошелёк — скоро</button>
+  </section>
+
+  <!-- ============ BOTTOM NAV ============ -->
+  <nav class="bottom-nav">
+    <button class="nav-item nav-item--active" data-screen="home">
+      <span class="nav-icon">⌂</span>
+      <span class="nav-label">Главная</span>
+    </button>
+    <button class="nav-item" data-screen="earn">
+      <span class="nav-icon">✦</span>
+      <span class="nav-label">Заработок</span>
+    </button>
+    <button class="nav-item" data-screen="friends">
+      <span class="nav-icon">◎</span>
+      <span class="nav-label">Друзья</span>
+    </button>
+    <button class="nav-item" data-screen="wallet">
+      <span class="nav-icon">◈</span>
+      <span class="nav-label">Кошелёк</span>
+    </button>
+  </nav>
+
+  <script src="script.js"></script>
 </body>
 </html>
