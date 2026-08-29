@@ -5,24 +5,11 @@
 html, body {
   margin: 0;
   padding: 0;
-  height: 100%;
   background: #EAF6E9;
-  overflow: hidden;
-}
-
-body {
-  height: 100vh;
-  height: 100dvh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .bg-photo {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain;
   display: block;
+  width: 100%;
+  height: auto;
 }
