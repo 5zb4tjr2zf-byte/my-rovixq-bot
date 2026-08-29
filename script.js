@@ -52,6 +52,27 @@ const balanceUsd = document.getElementById('balanceUsd');
 const hiveStage = document.getElementById('hiveStage');
 const bee = document.getElementById('bee');
 const hiveEntrance = document.getElementById('hiveEntrance');
+const hivePhoto = document.querySelector('.hive-photo');
+
+// Relative position of the hive entrance within the ORIGINAL photo (measured once)
+const ENTRANCE_FRACTION_X = 0.306;
+const ENTRANCE_FRACTION_Y = 0.538;
+
+function positionHiveEntrance() {
+  if (!hivePhoto || !hivePhoto.complete) return;
+  const imgRect = hivePhoto.getBoundingClientRect();
+  const stageRect = hiveStage.getBoundingClientRect();
+  const x = imgRect.left - stageRect.left + imgRect.width * ENTRANCE_FRACTION_X;
+  const y = imgRect.top - stageRect.top + imgRect.height * ENTRANCE_FRACTION_Y;
+  hiveEntrance.style.left = x + 'px';
+  hiveEntrance.style.top = y + 'px';
+}
+
+if (hivePhoto) {
+  if (hivePhoto.complete) positionHiveEntrance();
+  hivePhoto.addEventListener('load', positionHiveEntrance);
+}
+window.addEventListener('resize', positionHiveEntrance);
 const floatLayer = document.getElementById('floatLayer');
 const hiveStatusText = document.getElementById('hiveStatusText');
 const energyBarFill = document.getElementById('energyBarFill');
