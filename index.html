@@ -4,9 +4,98 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <title>Honey · HNY</title>
-<link rel="stylesheet" href="style.css?v=3" />
+<link rel="stylesheet" href="style.css?v=4" />
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-  <img src="background.jpeg" alt="" class="bg-photo" />
+
+  <!-- ============ HOME (photo + button panel) ============ -->
+  <main class="screen screen--active" id="screen-home">
+    <img src="background.jpeg" alt="" class="bg-photo" />
+
+    <div class="hex-panel">
+      <button class="hex-btn" data-screen="tasks">
+        <span class="hex-icon">📋</span>
+        <span class="hex-label">Завдання</span>
+      </button>
+      <button class="hex-btn" data-screen="friends">
+        <span class="hex-icon">👥</span>
+        <span class="hex-label">Друзі</span>
+      </button>
+      <button class="hex-btn" data-screen="wallet">
+        <span class="hex-icon">👛</span>
+        <span class="hex-label">Гаманець</span>
+      </button>
+    </div>
+  </main>
+
+  <!-- ============ ЗАВДАННЯ ============ -->
+  <section class="screen" id="screen-tasks">
+    <header class="subheader">
+      <button class="back-btn" data-back="home">← Назад</button>
+      <h1>Завдання</h1>
+    </header>
+    <div class="task-list" id="taskList"></div>
+  </section>
+
+  <!-- ============ ДРУЗІ ============ -->
+  <section class="screen" id="screen-friends">
+    <header class="subheader">
+      <button class="back-btn" data-back="home">← Назад</button>
+      <h1>Друзі</h1>
+    </header>
+
+    <div class="stat-pair">
+      <div class="stat-box">
+        <span class="stat-box-num" id="friendsCountNum">0</span>
+        <span class="stat-box-label">запрошено</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-box-num" id="friendsEarnedNum">0</span>
+        <span class="stat-box-label">HNY зароблено</span>
+      </div>
+    </div>
+
+    <div class="ref-link-box" id="refLinkBox">https://t.me/…</div>
+
+    <div class="ref-btn-row">
+      <button class="ref-btn ref-btn--ghost" id="copyRefBtn">Скопіювати</button>
+      <button class="ref-btn ref-btn--solid" id="shareRefBtn">Поділитись</button>
+    </div>
+
+    <p class="ref-note">Отримуй <b>30 HNY</b> за кожного друга, який відкриє Honey за твоїм посиланням.</p>
+  </section>
+
+  <!-- ============ ГАМАНЕЦЬ ============ -->
+  <section class="screen" id="screen-wallet">
+    <header class="subheader">
+      <button class="back-btn" data-back="home">← Назад</button>
+      <h1>Гаманець</h1>
+    </header>
+
+    <div class="wallet-total">
+      <span class="wallet-total-label">Загальний баланс</span>
+      <span class="wallet-total-value"><span id="walletBalance">0</span> HNY</span>
+    </div>
+
+    <div class="wallet-breakdown">
+      <div class="wallet-row">
+        <span>Заробив на пасіці</span>
+        <span id="walletFromHarvest">0</span>
+      </div>
+      <div class="wallet-row">
+        <span>Заробив за завдання</span>
+        <span id="walletFromTasks">0</span>
+      </div>
+      <div class="wallet-row">
+        <span>Заробив від друзів</span>
+        <span id="walletFromFriends">0</span>
+      </div>
+    </div>
+
+    <button class="wallet-connect-btn" disabled>Підключити гаманець — скоро</button>
+  </section>
+
+  <script src="script.js"></script>
 </body>
 </html>
