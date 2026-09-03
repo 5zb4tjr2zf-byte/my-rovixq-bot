@@ -4,17 +4,106 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <title>Honey · HNY</title>
-<link rel="stylesheet" href="style.css?v=7" />
+<link rel="stylesheet" href="style.css?v=8" />
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-  <video
-    class="bg-photo"
-    src="background.mp4"
-    autoplay
-    loop
-    muted
-    playsinline
-    webkit-playsinline
-  ></video>
+
+  <!-- ============ HOME (video + icon nav panel) ============ -->
+  <main class="screen screen--active" id="screen-home">
+    <video
+      class="bg-photo"
+      src="background.mp4"
+      autoplay
+      loop
+      muted
+      playsinline
+      webkit-playsinline
+    ></video>
+
+    <nav class="icon-nav">
+      <button class="icon-nav-btn icon-nav-btn--active" data-screen="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
+      </button>
+      <button class="icon-nav-btn" data-screen="tasks">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 5-5"/></svg>
+      </button>
+      <button class="icon-nav-btn" data-screen="friends">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4M16 3v4"/><circle cx="8" cy="15" r="1"/><circle cx="12" cy="15" r="1"/><circle cx="16" cy="15" r="1"/></svg>
+      </button>
+      <button class="icon-nav-btn" data-screen="wallet">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8l1.2 2.4L16 11l-2 2 .5 3-2.5-1.3L9.5 16l.5-3-2-2 2.8-.6z"/></svg>
+      </button>
+    </nav>
+  </main>
+
+  <!-- ============ ЗАВДАННЯ ============ -->
+  <section class="screen" id="screen-tasks">
+    <header class="subheader">
+      <button class="back-btn glass-btn" data-back="home">← Назад</button>
+      <h1>Завдання</h1>
+    </header>
+    <div class="task-list" id="taskList"></div>
+  </section>
+
+  <!-- ============ ДРУЗІ ============ -->
+  <section class="screen" id="screen-friends">
+    <header class="subheader">
+      <button class="back-btn glass-btn" data-back="home">← Назад</button>
+      <h1>Друзі</h1>
+    </header>
+
+    <div class="stat-pair">
+      <div class="stat-box">
+        <span class="stat-box-num" id="friendsCountNum">0</span>
+        <span class="stat-box-label">запрошено</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-box-num" id="friendsEarnedNum">0</span>
+        <span class="stat-box-label">HNY зароблено</span>
+      </div>
+    </div>
+
+    <div class="ref-link-box" id="refLinkBox">https://t.me/…</div>
+
+    <div class="ref-btn-row">
+      <button class="ref-btn glass-btn" id="copyRefBtn">Скопіювати</button>
+      <button class="ref-btn glass-btn glass-btn--amber" id="shareRefBtn">Поділитись</button>
+    </div>
+
+    <p class="ref-note">Отримуй <b>30 HNY</b> за кожного друга, який відкриє Honey за твоїм посиланням.</p>
+  </section>
+
+  <!-- ============ ГАМАНЕЦЬ ============ -->
+  <section class="screen" id="screen-wallet">
+    <header class="subheader">
+      <button class="back-btn glass-btn" data-back="home">← Назад</button>
+      <h1>Гаманець</h1>
+    </header>
+
+    <div class="wallet-total">
+      <span class="wallet-total-label">Загальний баланс</span>
+      <span class="wallet-total-value"><span id="walletBalance">0</span> HNY</span>
+    </div>
+
+    <div class="wallet-breakdown">
+      <div class="wallet-row">
+        <span>Заробив на пасіці</span>
+        <span id="walletFromHarvest">0</span>
+      </div>
+      <div class="wallet-row">
+        <span>Заробив за завдання</span>
+        <span id="walletFromTasks">0</span>
+      </div>
+      <div class="wallet-row">
+        <span>Заробив від друзів</span>
+        <span id="walletFromFriends">0</span>
+      </div>
+    </div>
+
+    <button class="wallet-connect-btn glass-btn" disabled>Підключити гаманець — скоро</button>
+  </section>
+
+  <script src="script.js?v=3"></script>
 </body>
 </html>
