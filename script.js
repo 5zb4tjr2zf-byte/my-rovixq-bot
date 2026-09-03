@@ -62,9 +62,13 @@ function showScreen(key) {
   if (key === 'friends') renderFriends();
   if (key === 'wallet') renderWallet();
   haptic('light');
+
+  document.querySelectorAll('.icon-nav-btn').forEach((b) => b.classList.remove('icon-nav-btn--active'));
+  const activeBtn = document.querySelector(`.icon-nav-btn[data-screen="${key}"]`);
+  if (activeBtn) activeBtn.classList.add('icon-nav-btn--active');
 }
 
-document.querySelectorAll('.hex-btn').forEach((btn) => {
+document.querySelectorAll('.icon-nav-btn').forEach((btn) => {
   btn.addEventListener('click', () => showScreen(btn.dataset.screen));
 });
 
@@ -130,11 +134,11 @@ function renderTasks() {
 
     let btnHtml;
     if (claimed) {
-      btnHtml = `<button class="task-btn" disabled>Готово ✓</button>`;
+      btnHtml = `<button class="task-btn glass-btn" disabled>Готово ✓</button>`;
     } else if (task.type === 'link') {
-      btnHtml = `<button class="task-btn" data-stage="open">Відкрити</button>`;
+      btnHtml = `<button class="task-btn glass-btn" data-stage="open">Відкрити</button>`;
     } else {
-      btnHtml = `<button class="task-btn ${ready ? 'task-btn--claim' : ''}" ${ready ? '' : 'disabled'}>${ready ? 'Забрати' : 'Заблоковано'}</button>`;
+      btnHtml = `<button class="task-btn glass-btn ${ready ? 'glass-btn--amber' : ''}" ${ready ? '' : 'disabled'}>${ready ? 'Забрати' : 'Заблоковано'}</button>`;
     }
 
     card.innerHTML = `
@@ -154,7 +158,7 @@ function renderTasks() {
             if (tg?.openTelegramLink) tg.openTelegramLink(task.url);
             else window.open(task.url, '_blank');
             btn.textContent = 'Забрати';
-            btn.classList.add('task-btn--claim');
+            btn.classList.add('glass-btn--amber');
             btn.dataset.stage = 'claim';
           } else {
             claimTask(task);
