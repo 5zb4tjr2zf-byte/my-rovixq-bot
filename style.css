@@ -5,11 +5,16 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: #6B9B3F;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
 }
 
 .bg-photo {
-  display: block;
-  width: 100%;
-  height: auto;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  object-fit: cover;
 }
