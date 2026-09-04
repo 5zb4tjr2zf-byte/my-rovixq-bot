@@ -69,12 +69,27 @@ function showScreen(key) {
 }
 
 document.querySelectorAll('.icon-nav-btn').forEach((btn) => {
-  btn.addEventListener('click', () => showScreen(btn.dataset.screen));
+  btn.addEventListener('click', () => navigateWithLoading(btn.dataset.screen));
 });
 
 document.querySelectorAll('[data-back]').forEach((btn) => {
-  btn.addEventListener('click', () => showScreen(btn.dataset.back));
+  btn.addEventListener('click', () => navigateWithLoading(btn.dataset.back));
 });
+
+const loadingOverlay = document.getElementById('loadingOverlay');
+
+function navigateWithLoading(key) {
+  if (loadingOverlay) {
+    loadingOverlay.classList.add('is-active');
+  }
+  const delay = 2000 + Math.random() * 1000; // 2–3 секунди
+  setTimeout(() => {
+    showScreen(key);
+    if (loadingOverlay) {
+      loadingOverlay.classList.remove('is-active');
+    }
+  }, delay);
+}
 
 // ==================== Bot / channel config ====================
 const BOT_USERNAME = 'rovixq_bot';
