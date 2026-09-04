@@ -4,23 +4,27 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <title>Honey · HNY</title>
-<link rel="stylesheet" href="style.css?v=8" />
+<link rel="stylesheet" href="style.css?v=9" />
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
 
-  <!-- ============ HOME (video + icon nav panel) ============ -->
-  <main class="screen screen--active" id="screen-home">
-    <video
-      class="bg-photo"
-      src="background.mp4"
-      autoplay
-      loop
-      muted
-      playsinline
-      webkit-playsinline
-    ></video>
+  <video
+    class="bg-photo"
+    src="background.mp4"
+    autoplay
+    loop
+    muted
+    playsinline
+    webkit-playsinline
+  ></video>
 
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- ============ HOME (icon nav panel over video) ============ -->
+  <main class="screen screen--active" id="screen-home">
     <nav class="icon-nav">
       <button class="icon-nav-btn icon-nav-btn--active" data-screen="home">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
@@ -104,6 +108,6 @@
     <button class="wallet-connect-btn glass-btn" disabled>Підключити гаманець — скоро</button>
   </section>
 
-  <script src="script.js?v=3"></script>
+  <script src="script.js?v=4"></script>
 </body>
 </html>
