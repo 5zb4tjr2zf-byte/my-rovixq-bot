@@ -13,11 +13,10 @@ function hapticNotify(type = 'success') {
 // Кожен шар: колір граней, назва, здоров'я блоку (кількість тапів до руйнування),
 // нагорода за тап, бонус за повне руйнування, шанс дропу мінералу.
 const LAYERS = [
-  { name: 'Дерево',    top: '#B08252', left: '#8C6339', right: '#6B4A2A', maxHealth: 8,  reward: 5,   breakBonus: 40,   mineral: null },
-  { name: 'Камінь',    top: '#8A8A8A', left: '#6E6E6E', right: '#525252', maxHealth: 14, reward: 8,   breakBonus: 90,   mineral: 'coal' },
-  { name: 'Залізняк',  top: '#C9A98A', left: '#A9876A', right: '#8A6B50', maxHealth: 22, reward: 14,  breakBonus: 180,  mineral: 'iron' },
-  { name: 'Золото',    top: '#F2C94D', left: '#D1A62E', right: '#A8811C', maxHealth: 32, reward: 24,  breakBonus: 360,  mineral: 'redstone' },
-  { name: 'Обсидіан',  top: '#5B4E86', left: '#443A66', right: '#2E2748', maxHealth: 46, reward: 40,  breakBonus: 700,  mineral: 'diamond' },
+  { name: 'Дерево',   top: '#B08252', left: '#8C6339', right: '#6B4A2A', maxHealth: 5000,   reward: 0.005, breakBonus: 0, mineral: null },
+  { name: 'Камінь',   top: '#8A8A8A', left: '#6E6E6E', right: '#525252', maxHealth: 20000,  reward: 0.02,  breakBonus: 0, mineral: 'coal' },
+  { name: 'Залізо',   top: '#C9A98A', left: '#A9876A', right: '#8A6B50', maxHealth: 75000,  reward: 0.1,   breakBonus: 0, mineral: 'iron' },
+  { name: 'Алмаз',    top: '#7FE0E8', left: '#4FBFCB', right: '#2E8F9A', maxHealth: 250000, reward: 0.5,   breakBonus: 0, mineral: 'diamond' },
 ];
 
 const MAX_DURABILITY = 2500;
@@ -56,6 +55,10 @@ function saveState() {
 }
 
 function fmt(n) { return Math.floor(n).toLocaleString('uk-UA'); }
+function fmtCC(n) {
+  // Баланс показуємо з 3 знаками після коми, бо нагороди дуже дрібні (0.005 CC)
+  return n.toLocaleString('uk-UA', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+}
 
 // ==================== DOM ====================
 const balanceEl = document.getElementById('balance');
@@ -87,7 +90,7 @@ function applyLayerVisual() {
 }
 
 function renderBalance() {
-  balanceEl.textContent = fmt(state.balance);
+  balanceEl.textContent = fmtCC(state.balance);
 }
 
 function renderDurability() {
@@ -164,9 +167,7 @@ function rollMineralDrop() {
 
 function breakBlock() {
   const layer = currentLayer();
-  state.balance += layer.breakBonus;
   rollMineralDrop();
-  spawnFloat('+' + layer.breakBonus);
   hapticNotify('success');
 
   state.layerIndex += 1;
@@ -185,13 +186,14 @@ function handleTap() {
     state.durability -= 1;
     state.blockHealth -= 1;
     state.balance += layer.reward;
-    spawnFloat('+' + layer.reward);
+    spawnFloat('+' + layer.reward.toFixed(3));
     haptic('light');
   } else {
-    // Кирка зламана — мінімальна нагорода голими руками
+    // Кирка зламана — мінімальна нагорода голими руками (менша за звичайний тап)
+    const bareHandsReward = layer.reward * 0.1;
     state.blockHealth -= 1;
-    state.balance += 1;
-    spawnFloat('+1');
+    state.balance += bareHandsReward;
+    spawnFloat('+' + bareHandsReward.toFixed(3));
     haptic('light');
   }
 
