@@ -24,7 +24,7 @@ const REGEN_PER_SEC = 3;
 const IDLE_CAP_HOURS = 8; // максимум часу офлайн-доходу, який враховуємо
 
 // ==================== Стан ====================
-const STORAGE_KEY = 'craftcoin_state_v1';
+const STORAGE_KEY = 'craftcoin_state_v2';
 
 const defaultState = {
   balance: 0,
