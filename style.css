@@ -58,12 +58,13 @@ html, body {
   margin-bottom: 4px;
 }
 
-.logo {
-  font-family: var(--font-pixel);
-  font-size: 22px;
-  color: var(--gold);
-  text-shadow: 3px 3px 0 rgba(0,0,0,0.6), 0 0 18px rgba(255,201,77,0.4);
-  letter-spacing: 1px;
+.logo-img {
+  display: block;
+  max-width: 260px;
+  width: 70%;
+  height: auto;
+  margin: 0 auto;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
 }
 
 .logo-sub {
