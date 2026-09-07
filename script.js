@@ -13,10 +13,10 @@ function hapticNotify(type = 'success') {
 // Кожен шар: колір граней, назва, здоров'я блоку (кількість тапів до руйнування),
 // нагорода за тап, бонус за повне руйнування, шанс дропу мінералу.
 const LAYERS = [
-  { name: 'Дерево',   top: '#B08252', left: '#8C6339', right: '#6B4A2A', maxHealth: 5000,   reward: 0.005, breakBonus: 0, mineral: null },
-  { name: 'Камінь',   top: '#8A8A8A', left: '#6E6E6E', right: '#525252', maxHealth: 20000,  reward: 0.02,  breakBonus: 0, mineral: 'coal' },
-  { name: 'Залізо',   top: '#C9A98A', left: '#A9876A', right: '#8A6B50', maxHealth: 75000,  reward: 0.1,   breakBonus: 0, mineral: 'iron' },
-  { name: 'Алмаз',    top: '#7FE0E8', left: '#4FBFCB', right: '#2E8F9A', maxHealth: 250000, reward: 0.5,   breakBonus: 0, mineral: 'diamond' },
+  { name: 'Дерево',   top: '#B08252', left: '#8C6339', right: '#6B4A2A', speckle: 'transparent',        maxHealth: 5000,   reward: 0.005, breakBonus: 0, mineral: null },
+  { name: 'Камінь',   top: '#8A8A8A', left: '#6E6E6E', right: '#525252', speckle: 'transparent',        maxHealth: 20000,  reward: 0.02,  breakBonus: 0, mineral: 'coal' },
+  { name: 'Залізо',   top: '#8A8A8A', left: '#6E6E6E', right: '#525252', speckle: '#C98A5A',            maxHealth: 75000,  reward: 0.1,   breakBonus: 0, mineral: 'iron' },
+  { name: 'Алмаз',    top: '#8A8A8A', left: '#6E6E6E', right: '#525252', speckle: '#5FE0E8',            maxHealth: 250000, reward: 0.5,   breakBonus: 0, mineral: 'diamond' },
 ];
 
 const MAX_DURABILITY = 2500;
@@ -72,6 +72,8 @@ const pickaxeLevelText = document.getElementById('pickaxeLevelText');
 const autoMinerBtn = document.getElementById('autoMinerBtn');
 const autoMinerStatus = document.getElementById('autoMinerStatus');
 const toastEl = document.getElementById('toast');
+const cubeFlash = document.getElementById('cubeFlash');
+const balanceRow = document.querySelector('.balance-row');
 const cracks = [
   document.querySelector('.crack-1'),
   document.querySelector('.crack-2'),
@@ -85,6 +87,7 @@ function applyLayerVisual() {
   blockCube.style.setProperty('--tier-top', layer.top);
   blockCube.style.setProperty('--tier-left', layer.left);
   blockCube.style.setProperty('--tier-right', layer.right);
+  blockCube.style.setProperty('--tier-speckle', layer.speckle);
   cubeLabel.textContent = layer.name.slice(0, 2).toUpperCase();
   pickaxeLevelText.textContent = `рівень ${state.layerIndex + 1}`;
 }
@@ -132,16 +135,37 @@ function spawnFloat(text) {
 }
 
 function spawnDust() {
-  for (let i = 0; i < 5; i++) {
+  const layer = currentLayer();
+  const dustColor = layer.speckle !== 'transparent' ? layer.speckle : layer.left;
+  for (let i = 0; i < 8; i++) {
     const d = document.createElement('div');
     d.className = 'dust';
+    d.style.background = dustColor;
     const angle = Math.random() * Math.PI * 2;
-    const dist = 30 + Math.random() * 30;
+    const dist = 30 + Math.random() * 35;
     d.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
     d.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
     floatLayer.appendChild(d);
     setTimeout(() => d.remove(), 500);
   }
+}
+
+function triggerHitAnimation() {
+  // 1. Вібрація блоку
+  blockCube.classList.remove('is-hit');
+  void blockCube.offsetWidth; // reflow, щоб анімація перезапустилась навіть при швидких тапах
+  blockCube.classList.add('is-hit');
+
+  // Спалах (імітація зміни спрайту на "більш тріснутий" на 1 кадр)
+  cubeFlash.classList.remove('is-flashing');
+  void cubeFlash.offsetWidth;
+  cubeFlash.classList.add('is-flashing');
+}
+
+function bumpBalance() {
+  balanceRow.classList.remove('is-bumping');
+  void balanceRow.offsetWidth;
+  balanceRow.classList.add('is-bumping');
 }
 
 function showToast(text) {
@@ -182,6 +206,8 @@ function breakBlock() {
 function handleTap() {
   const layer = currentLayer();
 
+  triggerHitAnimation();
+
   if (state.durability > 0) {
     state.durability -= 1;
     state.blockHealth -= 1;
@@ -197,6 +223,7 @@ function handleTap() {
     haptic('light');
   }
 
+  bumpBalance();
   spawnDust();
   renderCracks();
 
