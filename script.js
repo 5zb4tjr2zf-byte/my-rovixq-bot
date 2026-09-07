@@ -13,10 +13,10 @@ function hapticNotify(type = 'success') {
 // Кожен шар: колір граней, назва, здоров'я блоку (кількість тапів до руйнування),
 // нагорода за тап, бонус за повне руйнування, шанс дропу мінералу.
 const LAYERS = [
-  { name: 'Дерево',   top: '#B08252', left: '#8C6339', right: '#6B4A2A', speckle: 'transparent',        maxHealth: 5000,   reward: 0.005, breakBonus: 0, mineral: null },
-  { name: 'Камінь',   top: '#8A8A8A', left: '#6E6E6E', right: '#525252', speckle: 'transparent',        maxHealth: 20000,  reward: 0.02,  breakBonus: 0, mineral: 'coal' },
-  { name: 'Залізо',   top: '#8A8A8A', left: '#6E6E6E', right: '#525252', speckle: '#C98A5A',            maxHealth: 75000,  reward: 0.1,   breakBonus: 0, mineral: 'iron' },
-  { name: 'Алмаз',    top: '#8A8A8A', left: '#6E6E6E', right: '#525252', speckle: '#5FE0E8',            maxHealth: 250000, reward: 0.5,   breakBonus: 0, mineral: 'diamond' },
+  { name: 'Дерево',   image: 'tier-wood.png',    dustColor: '#8C6339', maxHealth: 5000,   reward: 0.005, breakBonus: 0, mineral: null },
+  { name: 'Камінь',   image: 'tier-stone.png',   dustColor: '#6E6E6E', maxHealth: 20000,  reward: 0.02,  breakBonus: 0, mineral: 'coal' },
+  { name: 'Залізо',   image: 'tier-iron.png',    dustColor: '#C98A5A', maxHealth: 75000,  reward: 0.1,   breakBonus: 0, mineral: 'iron' },
+  { name: 'Алмаз',    image: 'tier-diamond.png', dustColor: '#5FE0E8', maxHealth: 250000, reward: 0.5,   breakBonus: 0, mineral: 'diamond' },
 ];
 
 const MAX_DURABILITY = 2500;
@@ -63,7 +63,7 @@ function fmtCC(n) {
 // ==================== DOM ====================
 const balanceEl = document.getElementById('balance');
 const blockCube = document.getElementById('blockCube');
-const cubeLabel = document.getElementById('cubeLabel');
+const cubeImg = document.getElementById('cubeImg');
 const floatLayer = document.getElementById('floatLayer');
 const durabilityFill = document.getElementById('durabilityFill');
 const durabilityNums = document.getElementById('durabilityNums');
@@ -84,11 +84,7 @@ function currentLayer() { return LAYERS[state.layerIndex % LAYERS.length]; }
 
 function applyLayerVisual() {
   const layer = currentLayer();
-  blockCube.style.setProperty('--tier-top', layer.top);
-  blockCube.style.setProperty('--tier-left', layer.left);
-  blockCube.style.setProperty('--tier-right', layer.right);
-  blockCube.style.setProperty('--tier-speckle', layer.speckle);
-  cubeLabel.textContent = layer.name.slice(0, 2).toUpperCase();
+  cubeImg.src = layer.image;
   pickaxeLevelText.textContent = `рівень ${state.layerIndex + 1}`;
 }
 
@@ -136,7 +132,7 @@ function spawnFloat(text) {
 
 function spawnDust() {
   const layer = currentLayer();
-  const dustColor = layer.speckle !== 'transparent' ? layer.speckle : layer.left;
+  const dustColor = layer.dustColor;
   for (let i = 0; i < 8; i++) {
     const d = document.createElement('div');
     d.className = 'dust';
