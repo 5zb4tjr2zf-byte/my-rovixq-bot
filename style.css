@@ -137,12 +137,13 @@ html, body {
 
 .cube-flash {
   position: absolute;
-  inset: 0;
-  background: rgba(255,255,255,0.35);
+  inset: 6%;
+  background: rgba(255,255,255,0.4);
+  border-radius: 20%;
   opacity: 0;
   pointer-events: none;
   z-index: 4;
-  clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%);
+  mix-blend-mode: overlay;
 }
 .cube-flash.is-flashing {
   opacity: 1;
@@ -165,61 +166,16 @@ html, body {
   .balance-row.is-bumping { animation: none; }
 }
 
-.cube-face {
+.cube-img {
   position: absolute;
-  border: 3px solid rgba(0,0,0,0.35);
-}
-
-.cube-face--top {
-  top: 0; left: 14px;
-  width: 140px; height: 60px;
-  background: var(--tier-top, #A9784F);
-  clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%);
-  background-image:
-    radial-gradient(circle 3px at 20% 30%, var(--tier-speckle, transparent) 90%, transparent 100%),
-    radial-gradient(circle 2px at 55% 55%, var(--tier-speckle, transparent) 90%, transparent 100%),
-    radial-gradient(circle 3px at 75% 25%, var(--tier-speckle, transparent) 90%, transparent 100%),
-    radial-gradient(circle 2px at 40% 75%, var(--tier-speckle, transparent) 90%, transparent 100%),
-    linear-gradient(45deg, rgba(255,255,255,0.12) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.12) 75%),
-    linear-gradient(45deg, rgba(255,255,255,0.12) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.12) 75%);
-  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 20px 20px, 20px 20px;
-  background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 10px 10px;
-}
-
-.cube-face--left {
-  bottom: 0; left: 0;
-  width: 84px; height: 130px;
-  background: var(--tier-left, #7A552F);
-  background-image:
-    radial-gradient(circle 3px at 25% 20%, var(--tier-speckle, transparent) 90%, transparent 100%),
-    radial-gradient(circle 2px at 60% 45%, var(--tier-speckle, transparent) 90%, transparent 100%),
-    radial-gradient(circle 3px at 35% 70%, var(--tier-speckle, transparent) 90%, transparent 100%),
-    radial-gradient(circle 2px at 70% 85%, var(--tier-speckle, transparent) 90%, transparent 100%),
-    repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0 8px, transparent 8px 16px);
-  border-radius: 0 0 0 6px;
-}
-
-.cube-face--right {
-  bottom: 0; right: 0;
-  width: 84px; height: 130px;
-  background: var(--tier-right, #5E4023);
-  background-image:
-    radial-gradient(circle 3px at 30% 25%, var(--tier-speckle, transparent) 90%, transparent 100%),
-    radial-gradient(circle 2px at 65% 50%, var(--tier-speckle, transparent) 90%, transparent 100%),
-    radial-gradient(circle 3px at 40% 75%, var(--tier-speckle, transparent) 90%, transparent 100%),
-    repeating-linear-gradient(0deg, rgba(0,0,0,0.2) 0 8px, transparent 8px 16px);
-  border-radius: 0 0 6px 0;
-}
-
-.cube-label {
-  position: absolute;
-  top: 10px; left: 50%;
-  transform: translateX(-50%);
-  font-family: var(--font-pixel);
-  font-size: 14px;
-  color: rgba(0,0,0,0.55);
-  z-index: 2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 14px rgba(0,0,0,0.5));
   pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .cube-crack {
