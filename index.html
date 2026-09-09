@@ -3,136 +3,27 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<title>CraftCoin</title>
-<link rel="stylesheet" href="style.css?v=5" />
+<title>Ghost</title>
+<link rel="stylesheet" href="style.css?v=1" />
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
 
-  <div class="cave-bg"></div>
-
-  <!-- ============ MINE (головний екран) ============ -->
-  <main class="screen screen--active" id="screen-mine">
-    <header class="topbar">
-      <img src="logo.png" alt="CraftCoin" class="logo-img" />
-      <div class="logo-sub">Telegram Game</div>
-    </header>
-
-    <div class="balance-row">
-      <span class="coin-ico">🪙</span>
-      <span id="balance">0</span>
-      <span class="coin-ico">🪙</span>
+  <div class="stage">
+    <div class="ghost-wrap" id="ghostWrap">
+      <img src="ghost.png" alt="" class="ghost-img" id="ghostImg" />
     </div>
+  </div>
 
-    <div class="block-stage" id="blockStage">
-      <div class="block-glow"></div>
-      <button class="block-cube" id="blockCube">
-        <img src="tier-wood.png" alt="" class="cube-img" id="cubeImg" />
-        <div class="cube-crack crack-1"></div>
-        <div class="cube-crack crack-2"></div>
-        <div class="cube-crack crack-3"></div>
-        <div class="cube-flash" id="cubeFlash"></div>
-      </button>
-      <div class="float-layer" id="floatLayer"></div>
-    </div>
-
-    <div class="durability-panel">
-      <div class="durability-label">
-        <span>⛏ Міцність кирки</span>
-        <span id="durabilityNums">2500/2500</span>
-      </div>
-      <div class="durability-bar">
-        <div class="durability-fill" id="durabilityFill"></div>
-      </div>
-      <div class="durability-status" id="durabilityStatus"></div>
-    </div>
-
-    <div class="quick-row">
-      <div class="quick-btn">
-        <span class="quick-ico">⛏</span>
-        <span class="quick-text">
-          <b>Проста кирка</b>
-          <span id="pickaxeLevelText">рівень 1</span>
-        </span>
-      </div>
-      <div class="quick-btn" id="autoMinerBtn">
-        <span class="quick-ico">🤖</span>
-        <span class="quick-text">
-          <b>Авто-шахтар</b>
-          <span id="autoMinerStatus">Неактивний</span>
-        </span>
-      </div>
-    </div>
-  </main>
-
-  <!-- ============ CRAFT ============ -->
-  <section class="screen" id="screen-craft">
-    <header class="subheader">
-      <button class="back-btn" data-back="mine">← Назад</button>
-      <h1>Крафт</h1>
-    </header>
-    <div class="placeholder-card">
-      <div class="placeholder-icon">🛠️</div>
-      <p>Крафт інструментів і скінів скоро буде тут.</p>
-    </div>
-  </section>
-
-  <!-- ============ SHOP ============ -->
-  <section class="screen" id="screen-shop">
-    <header class="subheader">
-      <button class="back-btn" data-back="mine">← Назад</button>
-      <h1>Магазин</h1>
-    </header>
-    <div class="shop-list" id="shopList"></div>
-  </section>
-
-  <!-- ============ FRIENDS ============ -->
-  <section class="screen" id="screen-friends">
-    <header class="subheader">
-      <button class="back-btn" data-back="mine">← Назад</button>
-      <h1>Друзі</h1>
-    </header>
-    <div class="placeholder-card">
-      <div class="placeholder-icon">👥</div>
-      <p>Реферальна система скоро буде тут.</p>
-    </div>
-  </section>
-
-  <!-- ============ INVENTORY ============ -->
-  <section class="screen" id="screen-inventory">
-    <header class="subheader">
-      <button class="back-btn" data-back="mine">← Назад</button>
-      <h1>Інвентар</h1>
-    </header>
-    <div class="inv-grid" id="invGrid"></div>
-  </section>
-
-  <!-- ============ BOTTOM NAV ============ -->
-  <nav class="bottom-nav">
-    <button class="nav-item nav-item--active" data-screen="mine">
-      <span class="nav-ico">⛏</span>
-      <span class="nav-label">Mine</span>
+  <div class="controls">
+    <button class="ctrl-btn" id="btnLeft">
+      <img src="btn-left.png" alt="Ліворуч" />
     </button>
-    <button class="nav-item" data-screen="craft">
-      <span class="nav-ico">🛠️</span>
-      <span class="nav-label">Craft</span>
+    <button class="ctrl-btn" id="btnRight">
+      <img src="btn-right.png" alt="Праворуч" />
     </button>
-    <button class="nav-item" data-screen="shop">
-      <span class="nav-ico">💎</span>
-      <span class="nav-label">Shop</span>
-    </button>
-    <button class="nav-item" data-screen="friends">
-      <span class="nav-ico">👥</span>
-      <span class="nav-label">Friends</span>
-    </button>
-    <button class="nav-item" data-screen="inventory">
-      <span class="nav-ico">🎒</span>
-      <span class="nav-label">Inventory</span>
-    </button>
-  </nav>
+  </div>
 
-  <div class="toast" id="toast"></div>
-
-  <script src="script.js?v=3"></script>
+  <script src="script.js?v=1"></script>
 </body>
 </html>
