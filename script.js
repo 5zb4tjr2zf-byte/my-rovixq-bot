@@ -155,15 +155,36 @@ function renderHome() {
     heroWrap.innerHTML = `<div class="hero-empty">Ще немає жодного календаря.<br>Створи перший, щоб почати 👇</div>`;
   } else {
     const streak = currentStreak(hero);
-    const pct = hero.target > 0 ? Math.min(100, (hero.checkedDates.length/hero.target)*100) : Math.min(100, streak);
+    const checked = hero.checkedDates.length;
+    const target = hero.target || 0;
+    const pct = target > 0 ? Math.min(100, (checked/target)*100) : Math.min(100, streak);
     heroWrap.innerHTML = `
-      <div class="hero-card-simple" data-id="${hero.id}">
-        <div class="hero-top-row">
-          <div class="hero-icon-badge">${hero.icon}</div>
-          <div class="hero-title-block"><div class="hero-title">Твоя серія</div><div class="hero-sub-days">${streak} днів</div></div>
+      <div class="hero-card-new" data-id="${hero.id}">
+        <div class="hero-scene">
+          <div class="hero-star hero-star--1"></div>
+          <div class="hero-star hero-star--2"></div>
+          <div class="hero-star hero-star--3"></div>
+          <div class="hero-star hero-star--4"></div>
+          <svg class="hero-mountains" viewBox="0 0 320 120" preserveAspectRatio="none">
+            <polygon points="0,120 40,55 90,95 140,35 190,90 230,50 280,95 320,70 320,120" fill="#131B33" />
+            <polygon points="0,120 60,80 120,100 170,60 220,100 270,75 320,100 320,120" fill="#0C1224" />
+          </svg>
+          <div class="hero-scene-top">
+            <div class="hero-icon-badge">${hero.icon}</div>
+            <div class="hero-scene-title">${hero.name}</div>
+            <span class="hero-chevron">›</span>
+          </div>
+        </div>
+        <div class="hero-content">
+          <div class="hero-days-label">${checked} / ${target || '∞'} днів</div>
+          <div class="hero-bar-row">
+            <div class="hero-bar"><div class="hero-fill" style="width:${pct}%"></div></div>
+            <span class="hero-percent">${fmtPct(pct)}</span>
+          </div>
+          <div class="hero-series">🔥 Серія: ${streak} днів</div>
         </div>
       </div>`;
-    heroWrap.querySelector('.hero-card-simple').addEventListener('click', () => openCalendarDetail(hero.id));
+    heroWrap.querySelector('.hero-card-new').addEventListener('click', () => openCalendarDetail(hero.id));
   }
 
   const overall = document.getElementById('overallProgressCard');
