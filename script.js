@@ -139,10 +139,6 @@ document.querySelectorAll('[data-back]').forEach((el) => {
   el.addEventListener('click', () => showScreen(el.dataset.back));
 });
 
-// ==================== SPLASH ====================
-setTimeout(() => { document.getElementById('splashFill').style.width = '100%'; }, 100);
-setTimeout(() => { showScreen('home'); }, 1500);
-
 // ==================== HOME ====================
 function fmtPct(n) { return Math.round(n) + '%'; }
 
@@ -689,3 +685,4 @@ document.getElementById('restoreBtn').addEventListener('click', () => {
 applyTheme(THEMES.find((t) => t.id === state.theme) || THEMES[0]);
 checkAchievements();
 saveState();
+renderHome();
