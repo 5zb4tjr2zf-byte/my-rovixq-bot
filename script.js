@@ -5,7 +5,11 @@ function haptic(s = 'light') { if (tg?.HapticFeedback) tg.HapticFeedback.impactO
 function hapticNotify(t = 'success') { if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred(t); }
 
 // ==================== Довідники ====================
-const EMOJI_OPTIONS = ['🔥','🏋️','📖','💧','🧘','🎯','🥗','🚭','💰','🎨','🌱','😴'];
+const EMOJI_OPTIONS = [
+  '🔥','💧','🏋️','📖','🥗','🌙','🎯','💰','🧘','📵',
+  '🧠','😊','❤️','📋','📷','🎨','🏔️','👥','⭐','👑',
+  '🎁','🏆',
+];
 
 const THEMES = [
   { id: 'midnight', name: 'Midnight', price: 0, colors: ['#5B7CFA', '#3A56D4'] },
@@ -252,9 +256,12 @@ function renderCreateCalendarForm() {
   renderDurationRow();
 }
 
+const VISIBLE_EMOJI_COUNT = 7;
+
 function renderEmojiRow(container, onSelect, current) {
   container.innerHTML = '';
-  EMOJI_OPTIONS.forEach((emo) => {
+  const visible = EMOJI_OPTIONS.slice(0, VISIBLE_EMOJI_COUNT);
+  visible.forEach((emo) => {
     const btn = document.createElement('button');
     btn.className = 'emoji-chip' + (emo === current ? ' is-selected' : '');
     btn.textContent = emo;
@@ -266,7 +273,43 @@ function renderEmojiRow(container, onSelect, current) {
     });
     container.appendChild(btn);
   });
+
+  const moreBtn = document.createElement('button');
+  moreBtn.className = 'emoji-chip emoji-chip--more';
+  moreBtn.textContent = '···';
+  moreBtn.addEventListener('click', () => {
+    openIconPicker((selected) => {
+      onSelect(selected);
+      renderEmojiRow(container, onSelect, selected);
+    }, current);
+  });
+  container.appendChild(moreBtn);
 }
+
+// ---- Повний пікер іконок (кнопка "···") ----
+function openIconPicker(onSelect, current) {
+  const grid = document.getElementById('iconPickerGrid');
+  grid.innerHTML = '';
+  EMOJI_OPTIONS.forEach((emo) => {
+    const btn = document.createElement('button');
+    btn.className = 'icon-picker-item' + (emo === current ? ' is-selected' : '');
+    btn.textContent = emo;
+    btn.addEventListener('click', () => {
+      onSelect(emo);
+      haptic('light');
+      closeIconPicker();
+    });
+    grid.appendChild(btn);
+  });
+  document.getElementById('iconPickerOverlay').classList.add('is-active');
+}
+function closeIconPicker() {
+  document.getElementById('iconPickerOverlay').classList.remove('is-active');
+}
+document.getElementById('iconPickerOverlay').addEventListener('click', (e) => {
+  if (e.target.id === 'iconPickerOverlay') closeIconPicker();
+});
+document.getElementById('iconPickerCloseBtn').addEventListener('click', closeIconPicker);
 
 function renderDurationRow() {
   document.querySelectorAll('#durationRow .dur-chip').forEach((chip) => {
